@@ -23,6 +23,10 @@ function isContainingFolder(folderPath: string, documentPath: string): boolean {
   const normalizedFolder = normalizeForComparison(folderPath);
   const normalizedDocument = normalizeForComparison(documentPath);
 
+  if (normalizedFolder === '/') {
+    return normalizedDocument.startsWith('/');
+  }
+
   return (
     normalizedDocument === normalizedFolder ||
     normalizedDocument.startsWith(`${normalizedFolder}/`)

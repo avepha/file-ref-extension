@@ -41,6 +41,15 @@ describe('resolveReferencePath', () => {
     );
   });
 
+  it('returns a root-relative path when the POSIX root is the workspace folder', () => {
+    assert.equal(
+      resolveReferencePath('/workspace/app/src/main.ts', 'relative', [
+        { uri: { fsPath: '/' } },
+      ]),
+      'workspace/app/src/main.ts',
+    );
+  });
+
   it('uses the containing workspace folder in multi-root setups', () => {
     assert.equal(
       resolveReferencePath('/workspace/beta/src/main.ts', 'relative', [
