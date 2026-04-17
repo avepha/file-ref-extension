@@ -78,8 +78,12 @@
     "package": "vsce package",
     "package:inspect": "node scripts/inspect-vsix.js",
     "publish:marketplace": "vsce publish",
+    "publish:marketplace:vsix": "node scripts/publish-vsix.js marketplace",
     "publish:openvsx": "ovsx publish",
-    "release:check": "npm run build && npm run typecheck && npm run test && npm run audit:check && npm run package && npm run package:inspect"
+    "publish:openvsx:vsix": "node scripts/publish-vsix.js openvsx",
+    "release:check": "npm run build && npm run typecheck && npm run test && npm run audit:check && npm run package && npm run package:inspect",
+    "release:publish": "npm run release:check && npm run publish:marketplace:vsix && npm run publish:openvsx:vsix",
+    "release": "npx --yes -p semantic-release@24.2.9 -p @semantic-release/changelog@6.0.3 -p @semantic-release/commit-analyzer@13.0.1 -p @semantic-release/exec@7.1.0 -p @semantic-release/git@10.0.1 -p @semantic-release/github@11.0.6 -p @semantic-release/release-notes-generator@14.1.0 semantic-release"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

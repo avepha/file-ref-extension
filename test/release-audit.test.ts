@@ -18,6 +18,11 @@ describe('release audit gate', () => {
       packageJson.scripts?.['release:check'],
       'npm run build && npm run typecheck && npm run test && npm run audit:check && npm run package && npm run package:inspect',
     );
+    assert.equal(
+      packageJson.scripts?.['release:publish'],
+      'npm run release:check && npm run publish:marketplace:vsix && npm run publish:openvsx:vsix',
+    );
+    assert.match(packageJson.scripts?.release ?? '', /semantic-release/);
   });
 
   it('requires release validation workflow to run the audit gate before packaging', () => {
@@ -56,5 +61,27 @@ describe('release audit gate', () => {
     assert.match(checklist, /npm run audit:check/);
     assert.match(checklist, /before packaging or publish/i);
     assert.match(checklist, /audit/i);
+  });
+
+  it('documents semantic-release commit rules and required secrets', () => {
+    const readme = readFileSync(rootPath('README.md'), 'utf8');
+    const checklist = readFileSync(rootPath('docs', 'release-checklist.md'), 'utf8');
+
+    assert.match(readme, /Conventional Commits/i);
+    assert.match(readme, /VSCE_PAT/);
+    assert.match(readme, /OVSX_PAT/);
+    assert.match(checklist, /GITHUB_TOKEN/);
+    assert.match(checklist, /VSCE_PAT/);
+    assert.match(checklist, /OVSX_PAT/);
+  });
+
+  it('defines a semantic-release workflow on main', () => {
+    const workflow = readFileSync(rootPath('.github', 'workflows', 'release.yml'), 'utf8');
+
+    assert.match(workflow, /branches:\n\s+- main/);
+    assert.match(workflow, /fetch-depth:\s+0/);
+    assert.match(workflow, /npm run release/);
+    assert.match(workflow, /VSCE_PAT/);
+    assert.match(workflow, /OVSX_PAT/);
   });
 });
