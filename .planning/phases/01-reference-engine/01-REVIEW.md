@@ -1,6 +1,6 @@
 ---
 phase: 01-reference-engine
-reviewed: 2026-04-17T04:40:09Z
+reviewed: 2026-04-17T05:00:23Z
 depth: deep
 files_reviewed: 12
 files_reviewed_list:
@@ -18,81 +18,58 @@ files_reviewed_list:
   - test/reference.test.ts
 findings:
   critical: 0
-  warning: 4
-  info: 0
-  total: 4
+  warning: 1
+  info: 1
+  total: 2
 status: issues_found
 ---
 
 # Phase 01: Code Review Report
 
-**Reviewed:** 2026-04-17T04:40:09Z
+**Reviewed:** 2026-04-17T05:00:23Z
 **Depth:** deep
 **Files Reviewed:** 12
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the reference engine end to end across validation, line normalization, path resolution, manifest wiring, and scoped tests. `npm test` and `npm run typecheck` both pass, but there are still four behavior/configuration issues that can produce incorrect relative paths or block supported usage.
+Reviewed the reference engine across manifest/config, validation, range normalization, path resolution, and scoped tests. `npm test` and `npm run typecheck` both pass. The main remaining functional risk is Windows UNC path handling in relative mode.
 
 ## Warnings
 
-### WR-01: Relative mode picks the first matching workspace instead of the closest one
+### WR-01: Relative path resolution breaks for Windows UNC workspaces
 
-**File:** `src/path.ts:51-60`
-**Issue:** `resolveReferencePath()` uses `workspaceFolders.find(...)`, so nested multi-root workspaces resolve against whichever containing folder appears first. If both `/repo` and `/repo/packages/app` are open, a file inside `app` is rendered as `packages/app/...` instead of `src/...`, which is the wrong project-local reference.
-**Fix:** Prefer the deepest containing workspace folder before computing the relative path.
-
-```ts
-const containingFolder = workspaceFolders
-  .filter((folder) => isContainingFolder(folder.uri.fsPath, documentPath))
-  .sort((left, right) => right.uri.fsPath.length - left.uri.fsPath.length)[0];
-```
-
-### WR-02: POSIX root workspaces never resolve to relative paths
-
-**File:** `src/path.ts:5-7,22-29`
-**Issue:** When the workspace folder is `/`, `isContainingFolder()` checks `normalizedDocument.startsWith('//')`, which is always false for normal POSIX paths. Opening the filesystem root as a workspace therefore forces absolute output even in relative mode.
-**Fix:** Special-case the POSIX root when checking folder containment.
+**File:** `src/path.ts:9-16,36-41,55-64`
+**Issue:** `isWindowsPath()` only recognizes drive-letter paths like `C:\...`. UNC paths such as `\\server\share\repo\file.ts` fall through to the POSIX branch in `relativeFromContainingFolder()`, which runs `path.posix.relative()` on backslash-delimited Windows paths. That produces malformed references like `..///server/share/...` instead of `src/file.ts`. The same drive-letter-only check also skips Windows-style case folding for UNC paths, so mixed-case UNC workspace/document pairs can fail containment checks.
+**Fix:** Treat UNC paths as Windows paths and normalize separators before computing the relative path.
 
 ```ts
-function isContainingFolder(folderPath: string, documentPath: string): boolean {
-  const normalizedFolder = normalizeForComparison(folderPath);
-  const normalizedDocument = normalizeForComparison(documentPath);
+function isWindowsPath(value: string): boolean {
+  return /^[A-Za-z]:[\\/]/.test(value) || value.startsWith('\\\\');
+}
 
-  if (normalizedFolder === '/') {
-    return normalizedDocument.startsWith('/');
+function relativeFromContainingFolder(folderPath: string, documentPath: string): string {
+  const normalizedFolder = normalizeToPosixPath(folderPath);
+  const normalizedDocument = normalizeToPosixPath(documentPath);
+
+  if (isWindowsPath(folderPath) || isWindowsPath(documentPath)) {
+    return normalizeToPosixPath(path.win32.relative(folderPath, documentPath));
   }
 
-  return (
-    normalizedDocument === normalizedFolder ||
-    normalizedDocument.startsWith(`${normalizedFolder}/`)
-  );
+  return path.posix.relative(normalizedFolder, normalizedDocument);
 }
 ```
 
-### WR-03: Read-only saved files lose the advertised one-keystroke workflow
+## Info
 
-**File:** `package.json:60,66`
-**Issue:** Both keybindings require `!editorReadonly`, but copying a file reference is read-only behavior. This blocks the extension's primary shortcut for valid saved local files opened in read-only mode, which is stricter than the product constraint.
-**Fix:** Remove the read-only guard from the keybinding `when` clauses.
+### IN-01: Path tests miss UNC regression coverage
 
-```json
-"when": "editorTextFocus && !isInDiffEditor && resourceScheme == file"
-```
-
-### WR-04: The production bundle targets a newer Node runtime than the declared VS Code support range
-
-**File:** `esbuild.js:12`
-**Issue:** The bundle target is `node24`, but the extension runs inside VS Code's extension host, not the developer's local Node installation. With `engines.vscode: ^1.100.0`, this can emit syntax/features newer than the minimum supported host runtime and cause avoidable runtime incompatibilities.
-**Fix:** Target the minimum Node version guaranteed by the supported VS Code range, or use a conservative ECMAScript target aligned with that runtime.
-
-```js
-target: 'node20',
-```
+**File:** `test/path.test.ts:73-96`
+**Issue:** The path suite covers drive-letter Windows paths but not UNC shares. That leaves the broken `\\server\share\...` case unguarded, so this cross-platform regression can slip through despite the current tests passing.
+**Fix:** Add tests for absolute and relative UNC paths, including mixed-case workspace/document pairs.
 
 ---
 
-_Reviewed: 2026-04-17T04:40:09Z_
+_Reviewed: 2026-04-17T05:00:23Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
