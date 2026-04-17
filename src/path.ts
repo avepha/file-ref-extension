@@ -7,7 +7,7 @@ function trimTrailingSlash(value: string): string {
 }
 
 function isWindowsPath(value: string): boolean {
-  return /^[A-Za-z]:[\\/]/.test(value);
+  return /^[A-Za-z]:[\\/]/.test(value) || value.startsWith('\\\\');
 }
 
 function normalizeForComparison(value: string): string {
@@ -34,11 +34,14 @@ function isContainingFolder(folderPath: string, documentPath: string): boolean {
 }
 
 function relativeFromContainingFolder(folderPath: string, documentPath: string): string {
+  const normalizedFolder = normalizeToPosixPath(folderPath);
+  const normalizedDocument = normalizeToPosixPath(documentPath);
+
   if (isWindowsPath(folderPath) || isWindowsPath(documentPath)) {
     return normalizeToPosixPath(path.win32.relative(folderPath, documentPath));
   }
 
-  return normalizeToPosixPath(path.posix.relative(folderPath, documentPath));
+  return path.posix.relative(normalizedFolder, normalizedDocument);
 }
 
 export function resolveReferencePath(
