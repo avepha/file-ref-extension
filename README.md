@@ -19,8 +19,8 @@ File Reference copies a deterministic plain-text reference for the active saved 
 
 | Platform | Absolute | Relative |
 | --- | --- | --- |
-| macOS | `Cmd+Option+K` | `Cmd+Option+Shift+K` |
-| Windows / Linux | `Ctrl+Alt+K` | `Ctrl+Alt+Shift+K` |
+| macOS | `Alt+Shift+C` | `Alt+C` |
+| Windows / Linux | `Ctrl+Alt+Shift+C` | `Ctrl+Alt+C` |
 
 ## Supported editor state
 
