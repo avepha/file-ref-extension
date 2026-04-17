@@ -1,6 +1,6 @@
 ---
 phase: 02-command-workflow
-reviewed: 2026-04-17T04:38:51Z
+reviewed: 2026-04-17T04:59:07Z
 depth: deep
 files_reviewed: 7
 files_reviewed_list:
@@ -25,59 +25,56 @@ status: issues_found
 
 # Phase 02: Code Review Report
 
-**Reviewed:** 2026-04-17T04:38:51Z
+**Reviewed:** 2026-04-17T04:59:07Z
 **Depth:** deep
 **Files Reviewed:** 7
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the command registration, manifest wiring, workflow adapter, reference builder, and related tests. Tracing the runtime path from `src/extension.ts` through `src/workflow.ts` into `src/reference.ts` and its dependencies found no critical security issues, but there are two command-flow bugs that can produce unclear or unsupported behavior at runtime.
+Reviewed the command registration, manifest wiring, workflow layer, reference builder, and related tests. Deep tracing from `src/extension.ts` through `src/workflow.ts` into `src/reference.ts` and its imported path/guard helpers found no critical security issues, but there are two behavioral bugs in the command flow that can mislead users about whether a copy actually succeeded and what kind of reference was copied.
 
 ## Warnings
 
-### WR-01: Clipboard write failures are surfaced as generic command errors
+### WR-01: Command can report success even when nothing was copied
 
-**File:** `src/workflow.ts:90-93`
-**Issue:** `executeCopyReferenceCommand()` awaits `clipboard.writeText()` without handling rejection. If clipboard access fails, the command aborts before showing a user-facing error, which violates the project requirement to fail clearly for unsupported or failed states.
-**Fix:** Wrap the clipboard write in `try/catch`, show an explicit error message, and return a structured failure result instead of letting the promise reject silently from the workflow layer.
+**File:** `src/workflow.ts:103-121`
+**Issue:** `executeCopyReferenceCommand()` treats the clipboard service as optional and calls it with optional chaining (`environment.clipboard?.writeText(reference)`). If a caller forgets to provide `clipboard`, the command still falls through to the success notification and returns the successful reference result even though nothing was written. That creates a false-positive success path in the shared workflow layer.
+**Fix:** Require a clipboard service before reporting success, and return a structured failure when it is missing.
 
 ```ts
-try {
-  await environment.clipboard?.writeText(reference);
-} catch {
-  void environment.notifications?.showErrorMessage('Failed to copy file reference');
+if (!environment.clipboard) {
+  const message = 'Failed to copy file reference';
+  void environment.notifications?.showErrorMessage(message);
   return {
     ok: false,
     error: {
       reason: 'clipboard-write-failed',
-      message: 'Failed to copy file reference',
+      message,
     },
   };
 }
+
+await environment.clipboard.writeText(reference);
 ```
 
-### WR-02: Diff-editor rejection is unreachable in the real extension path
+### WR-02: Relative command shows the wrong success message after absolute fallback
 
-**File:** `src/extension.ts:11-31`, `src/workflow.ts:35-64`
-**Issue:** The manifest blocks diff editors only for keybindings, but the commands remain callable from the Command Palette. `validateEditorInput()` supports rejecting `diff-editor`, yet `toEditorLike()` rebuilds a minimal editor object and drops any diff-editor context, so that guard cannot trigger for real `vscode.TextEditor` instances. The command can therefore run in a diff editor and copy a side-specific path instead of failing clearly.
-**Fix:** Detect diff-editor state before calling `executeCopyReferenceCommand()` and preserve it in the adapted editor contract passed to validation.
+**File:** `src/path.ts:59-64`, `src/workflow.ts:34-35`, `src/workflow.ts:119`
+**Issue:** `resolveReferencePath()` intentionally falls back to an absolute path when the file is not inside any workspace folder, but `executeCopyReferenceCommand()` always shows `Copied relative file reference` whenever the requested mode is `relative`. In that path, the clipboard can contain an absolute reference while the UI tells the user a relative one was copied.
+**Fix:** Return the effective output kind from the reference builder or choose a neutral fallback-aware message before notifying success.
 
 ```ts
-const tab = vscode.window.tabGroups.activeTabGroup.activeTab;
-const isDiffEditor = tab?.input instanceof vscode.TabInputTextDiff;
+const resolved = resolveReferencePath(documentPath, mode, workspaceFolders);
+const effectiveMode = mode === 'relative' && resolved === normalizeToPosixPath(documentPath)
+  ? 'absolute'
+  : mode;
 
-const editor = vscode.window.activeTextEditor;
-const editorLike = editor
-  ? {
-      ...toEditorLike(editor),
-      isDiffEditor,
-    }
-  : undefined;
+void environment.notifications?.showInformationMessage(successMessageFor(effectiveMode));
 ```
 
 ---
 
-_Reviewed: 2026-04-17T04:38:51Z_
+_Reviewed: 2026-04-17T04:59:07Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
