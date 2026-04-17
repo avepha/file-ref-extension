@@ -233,4 +233,35 @@ describe('executeCopyReferenceCommand', () => {
     assert.deepEqual(errorMessages, ['Failed to copy file reference']);
     assert.deepEqual(infoMessages, []);
   });
+
+  it('returns a clear failure when the clipboard service is missing', async () => {
+    const errorMessages: string[] = [];
+    const infoMessages: string[] = [];
+
+    const result = await executeCopyReferenceCommand(
+      {
+        activeEditor: createEditor(),
+        notifications: {
+          showErrorMessage(message: string): string {
+            errorMessages.push(message);
+            return message;
+          },
+          showInformationMessage(message: string): string {
+            infoMessages.push(message);
+            return message;
+          },
+        },
+        workspaceFolders: [{ uri: { fsPath: '/workspace/app' } }],
+      },
+      'absolute',
+    );
+
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.equal(result.error.reason, 'clipboard-write-failed');
+      assert.equal(result.error.message, 'Failed to copy file reference');
+    }
+    assert.deepEqual(errorMessages, ['Failed to copy file reference']);
+    assert.deepEqual(infoMessages, []);
+  });
 });

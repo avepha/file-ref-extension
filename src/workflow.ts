@@ -100,8 +100,22 @@ export async function executeCopyReferenceCommand(
 
   const reference = result.value;
 
+  if (!environment.clipboard) {
+    const message = 'Failed to copy file reference';
+
+    void environment.notifications?.showErrorMessage(message);
+
+    return {
+      ok: false,
+      error: {
+        reason: 'clipboard-write-failed',
+        message,
+      },
+    };
+  }
+
   try {
-    await environment.clipboard?.writeText(reference);
+    await environment.clipboard.writeText(reference);
   } catch {
     const message = 'Failed to copy file reference';
 
