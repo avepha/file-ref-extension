@@ -30,6 +30,32 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. User gets a clear failure instead of ambiguous output when the active editor is unsupported.
 **Plans**: 2 plans
 
+#### Plan 1.1: Validation and Range Contract
+**Outcome**: The project has a pure domain contract for supported editor state checks and deterministic line/range normalization, with tests locking down the output rules before VS Code command wiring begins.
+**Covers**: EDIT-01, EDIT-02, REF-01, REF-02, REF-05
+**Key work**:
+- Scaffold the minimal TypeScript extension project shape needed to build and test pure modules.
+- Implement validation helpers for active-editor requirements: saved document, local `file` scheme, and clear unsupported outcomes.
+- Implement one normalized line/range helper covering cursor-only, single-line selection, multi-line selection, and reverse selections.
+- Add unit tests for supported vs unsupported editor-state inputs and for line/range normalization edge cases.
+**Exit checks**:
+- Unsupported states return explicit failures instead of partial references.
+- Selection direction never changes emitted line or range values.
+- Single-line cases always collapse to `path:line`, never `path:start-end`.
+
+#### Plan 1.2: Path Resolution and Reference Formatting
+**Outcome**: The pure reference engine can assemble absolute or workspace-relative references with POSIX normalization and absolute fallback behavior, ready to be consumed by command handlers in Phase 2.
+**Covers**: REF-03, REF-04, REF-05
+**Key work**:
+- Implement absolute-path normalization and workspace-relative path resolution using the containing workspace folder only.
+- Add fallback logic so relative mode emits an absolute path when no workspace-relative path exists.
+- Implement the final formatter that combines normalized path output with the normalized line/range contract.
+- Add unit tests for POSIX slash normalization, Windows-style path fixtures, workspace-relative behavior, and outside-workspace fallback.
+**Exit checks**:
+- Absolute and relative modes share one canonical formatter.
+- Output uses forward slashes on every platform.
+- Multi-root workspace fixtures prove relative output is based on the containing folder, not workspace order.
+
 ### Phase 2: Command Workflow
 **Goal**: Users can trigger the copy workflow quickly from standard VS Code entry points and immediately get clipboard and feedback results.
 **Depends on**: Phase 1

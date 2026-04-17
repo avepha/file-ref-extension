@@ -7,16 +7,16 @@
 
 ### Editor Support
 
-- [ ] **EDIT-01**: User can run File Reference from a saved local text file in the active editor.
-- [ ] **EDIT-02**: User gets a clear error instead of copied output when the active editor is unsupported.
+- [x] **EDIT-01**: User can run File Reference from a saved local text file in the active editor.
+- [x] **EDIT-02**: User gets a clear error instead of copied output when the active editor is unsupported.
 
 ### Reference Output
 
-- [ ] **REF-01**: User can copy an absolute file reference as `path:line` when there is no selection or the selection stays on one line.
-- [ ] **REF-02**: User can copy an absolute file reference as `path:start-end` when the selection spans multiple lines.
-- [ ] **REF-03**: User can copy a workspace-relative file reference with the same line and range rules when the file belongs to a workspace folder.
-- [ ] **REF-04**: User can still copy a reference when using relative mode outside the workspace because the command falls back to an absolute path.
-- [ ] **REF-05**: User always gets POSIX-style forward slashes and normalized line ranges regardless of platform or selection direction.
+- [x] **REF-01**: User can copy an absolute file reference as `path:line` when there is no selection or the selection stays on one line.
+- [x] **REF-02**: User can copy an absolute file reference as `path:start-end` when the selection spans multiple lines.
+- [x] **REF-03**: User can copy a workspace-relative file reference with the same line and range rules when the file belongs to a workspace folder.
+- [x] **REF-04**: User can still copy a reference when using relative mode outside the workspace because the command falls back to an absolute path.
+- [x] **REF-05**: User always gets POSIX-style forward slashes and normalized line ranges regardless of platform or selection direction.
 
 ### Access
 
@@ -66,13 +66,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EDIT-01 | Phase 1 | Pending |
-| EDIT-02 | Phase 1 | Pending |
-| REF-01 | Phase 1 | Pending |
-| REF-02 | Phase 1 | Pending |
-| REF-03 | Phase 1 | Pending |
-| REF-04 | Phase 1 | Pending |
-| REF-05 | Phase 1 | Pending |
+| EDIT-01 | Phase 1 | Complete |
+| EDIT-02 | Phase 1 | Complete |
+| REF-01 | Phase 1 | Complete |
+| REF-02 | Phase 1 | Complete |
+| REF-03 | Phase 1 | Complete |
+| REF-04 | Phase 1 | Complete |
+| REF-05 | Phase 1 | Complete |
 | ACC-01 | Phase 2 | Pending |
 | ACC-02 | Phase 2 | Pending |
 | ACC-03 | Phase 2 | Pending |
