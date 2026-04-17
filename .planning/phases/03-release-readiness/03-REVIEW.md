@@ -1,6 +1,6 @@
 ---
 phase: 03-release-readiness
-reviewed: 2026-04-17T04:59:37Z
+reviewed: 2026-04-17T05:18:01Z
 depth: deep
 files_reviewed: 11
 files_reviewed_list:
@@ -29,57 +29,65 @@ status: issues_found
 
 # Phase 03: Code Review Report
 
-**Reviewed:** 2026-04-17T04:59:37Z
+**Reviewed:** 2026-04-17T05:18:01Z
 **Depth:** deep
 **Files Reviewed:** 11
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the release-readiness files across CI, packaging checks, metadata, docs, and release tests. I also executed `npm run release:check`; build, typecheck, tests, and VSIX packaging passed, but `npm run package:inspect` failed against the real `.vsix`. The main risk is that the current inspection/tests encode the wrong packaged filenames, so release validation is currently broken despite the unit tests passing.
+Reviewed the release-readiness scope across CI, packaging rules, manifest metadata, publish docs, and release-focused tests. The release surface is close, but two validation gaps still allow packaging/documentation regressions to slip through, and changelog/version sync is not enforced.
 
 ## Warnings
 
-### WR-01: Real VSIX inspection is broken by incorrect expected entry names
+### WR-01: VSIX inspection allows unexpected packaged files to ship unnoticed
 
-**File:** `scripts/inspect-vsix.js:4-11`, `scripts/inspect-vsix.js:67-70`, `test/release-assets.test.ts:29-40`
-**Issue:** `requiredEntries` expects `extension/README.md`, `extension/CHANGELOG.md`, and `extension/LICENSE`, but `vsce package` emits `extension/readme.md`, `extension/changelog.md`, and `extension/LICENSE.txt`. As a result, `npm run package:inspect` fails on the actual archive, which also makes `npm run release:check` fail and blocks release validation. The accompanying test only feeds `inspectEntries([...requiredEntries])`, so it gives false confidence and never exercises the real packaged names.
-**Fix:** Align the required entries with actual `vsce` output, or normalize entry names before comparison, and add a test that inspects a real packaged VSIX (or a fixture that matches `vsce` naming).
+**File:** `/Users/farhan/Documents/file-ref-extension/scripts/inspect-vsix.js:57-71`
+**Issue:** `inspectEntries()` only checks that a small forbidden list is absent and a small required list is present. Any extra root file that is not covered by `forbiddenPrefixes`/`forbiddenEntries` will still pass inspection. That weakens the stated packaging guarantee in `docs/release-checklist.md` that the VSIX should contain only the bundled runtime, manifest, release docs, and icon.
+**Fix:** Switch the inspection from a partial blacklist to an allowlist, then add a test that proves unexpected entries fail.
 
 ```js
-const requiredEntries = [
+const allowedEntries = new Set([
   'extension/package.json',
   'extension/dist/extension.js',
   'extension/readme.md',
   'extension/changelog.md',
   'extension/LICENSE.txt',
   'extension/media/icon.png',
-];
+]);
+
+const unexpectedEntries = entries.filter((entry) => !allowedEntries.has(entry));
+if (unexpectedEntries.length > 0) {
+  throw new Error(`VSIX contains unexpected files:\n${unexpectedEntries.join('\n')}`);
+}
 ```
 
-### WR-02: Published shortcut documentation does not match the manifest
+### WR-02: README drift test does not verify documented command IDs
 
-**File:** `README.md:18-23`, `package.json:55-67`
-**Issue:** The README advertises `Cmd+Option+K` / `Cmd+Option+Shift+K` on macOS and `Ctrl+Alt+K` / `Ctrl+Alt+Shift+K` on Windows/Linux, but the manifest actually contributes `Alt+Shift+C` and `Alt+C` variants. Shipping the current README would publish incorrect usage instructions and make the extension look broken to users even if the commands work.
-**Fix:** Update the README table to match `package.json`, or change the manifest to match the documented shortcuts and keep both in sync with a test.
+**File:** `/Users/farhan/Documents/file-ref-extension/test/release-assets.test.ts:61-79`, `/Users/farhan/Documents/file-ref-extension/test/release-assets.test.ts:110-121`, `/Users/farhan/Documents/file-ref-extension/README.md:15-18`
+**Issue:** The README “Commands” table documents both command IDs and command-palette titles, but `parseReadmeDocs()` returns only the second column and `getExpectedReadmeDocs()` compares only manifest titles. A broken README command ID such as ``fileReference.copyAbsoulteReference`` would still pass CI, leaving published docs incorrect.
+**Fix:** Parse and compare both columns so the test fails when either the command ID or the title drifts.
 
-```md
-| Platform | Absolute | Relative |
-| --- | --- | --- |
-| macOS | `Alt+Shift+C` | `Alt+C` |
-| Windows / Linux | `Ctrl+Alt+Shift+C` | `Ctrl+Alt+C` |
+```ts
+type ReadmeCommandRow = { id: string; title: string };
+
+const cells = line.split('|').slice(1, -1).map((cell) => cell.trim().replace(/^`|`$/g, ''));
+return [{ id: cells[0], title: cells[1] }];
+
+const expectedCommands = manifest.contributes.commands.map(({ command, title }) => ({ id: command, title }));
+assertReadmeSectionMatches('Commands', actualDocs.commands, expectedCommands);
 ```
 
 ## Info
 
-### IN-01: VSIX hygiene rules do not account for shipped source maps
+### IN-01: Package version and changelog version are not kept in sync by automation
 
-**File:** `.vscodeignore:1-15`, `scripts/inspect-vsix.js:13-29`
-**Issue:** The packaged archive currently includes `extension/dist/extension.js.map`, but neither `.vscodeignore` nor the inspection script treats source maps as intentionally allowed or explicitly forbidden. That makes the package contents drift from the stated goal of shipping only the bundled runtime and release assets.
-**Fix:** Decide whether source maps are part of the public artifact. If not, exclude `dist/**/*.map` from the VSIX or disable production sourcemaps; if yes, add an explicit allowlist/assertion so the packaging policy is clear.
+**File:** `/Users/farhan/Documents/file-ref-extension/package.json:5`, `/Users/farhan/Documents/file-ref-extension/CHANGELOG.md:5`, `/Users/farhan/Documents/file-ref-extension/docs/release-checklist.md:25-29`
+**Issue:** The checklist tells maintainers to update both `package.json` and `CHANGELOG.md`, but no test or workflow check enforces that the latest changelog entry matches `package.json.version`. A mismatched release note heading can therefore ship unnoticed.
+**Fix:** Add a lightweight release test that parses the latest changelog version and compares it to `package.json.version`.
 
 ---
 
-_Reviewed: 2026-04-17T04:59:37Z_
+_Reviewed: 2026-04-17T05:18:01Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
