@@ -101,7 +101,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Maintainer can package the extension for both VS Code Marketplace and Open VSX using a repeatable release workflow.
   2. Users on macOS, Windows, and Linux get the same reference-formatting and command behavior for the same editor scenario.
   3. The published artifact is suitable for public installation without missing metadata or packaging blockers.
-**Plans**: 1 plan
+**Plans**: 3 plans
+
+Plans:
+- [x] 03-PLAN.md — Package the extension, add release assets, and wire repeatable VSIX validation.
+- [x] 03-02-PLAN.md — Align README command/shortcut docs with the shipped manifest and add drift detection.
+- [ ] 03-03-PLAN.md — Remove high-severity audit findings and enforce audit review in release validation.
 
 ## Progress
 
@@ -112,4 +117,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Reference Engine | 2/2 | Complete | 2026-04-17 |
 | 2. Command Workflow | 2/2 | Complete | 2026-04-17 |
-| 3. Release Readiness | 1/1 | Complete | 2026-04-17 |
+| 3. Release Readiness | 2/3 | In Progress | — |

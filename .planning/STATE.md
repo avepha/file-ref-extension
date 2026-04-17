@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 03-PLAN.md
-last_updated: "2026-04-17T04:37:27.945Z"
+status: executing
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-04-17T05:08:52.191Z"
 last_activity: 2026-04-17
 progress:
   total_phases: 3
-  completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  completed_phases: 2
+  total_plans: 5
+  completed_plans: 4
+  percent: 80
 ---
 
 # Project State
@@ -21,24 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-17)
 
 **Core value:** Copy a correct, paste-ready file reference from VS Code instantly, with predictable formatting and minimal friction.
-**Current focus:** Milestone complete - ready for verification
+**Current focus:** Phase 03 — release-readiness
 
 ## Current Position
 
-Phase: 3 of 3 (Release Readiness)
-Plan: 1 of 1 in current phase
-Status: Complete — ready for verification
-Last activity: 2026-04-17
+Phase: 03 (release-readiness) — EXECUTING
+Plan: 2 of 3
+Status: Executing Phase 03
+Last activity: 2026-04-17 -- Completed 03-02-PLAN.md
 
-Progress: [██████████] 100%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 3
-- Average duration: 7 min
-- Total execution time: 0.3 hours
+- Total plans completed: 4
+- Average duration: 5 min
+- Total execution time: 0.4 hours
 
 **By Phase:**
 
@@ -46,16 +46,17 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 01 | 1 | 7 min | 7 min |
 | 02 | 1 | 1 min | 1 min |
-| 03 | 1 | 12 min | 12 min |
+| 03 | 2 | 13 min | 6.5 min |
 
 **Recent Trend:**
 
-- Last 5 plans: Phase 01 Plan 01 (7 min), Phase 02 Plan 02 (1 min), Phase 03 Plan 03 (12 min)
+- Last 5 plans: Phase 01 Plan 01 (7 min), Phase 02 Plan 02 (1 min), Phase 03 Plan 03 (12 min), Phase 03 Plan 02 (1 min)
 - Trend: Stable
 
 | Phase 01 P01 | 7 | 2 tasks | 12 files |
 | Phase 02 P02 | 1 min | 2 tasks | 7 files |
 | Phase 03 P03 | 12 min | 2 tasks | 12 files |
+| Phase 03 P02 | 1 min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,7 @@ Recent decisions affecting current work:
 - [Phase 02]: Use vscode.env.clipboard and concise toasts directly in the workflow so copy UX stays one-step.
 - [Phase 03]: Keep release validation on one npm entrypoint so build, tests, packaging, and VSIX inspection stay repeatable.
 - [Phase 03]: Enforce packaging hygiene with both .vscodeignore rules and an archive inspection step so accidental dev-file regressions fail fast.
+- [Phase 03]: Represent the README command section as a manifest-aligned table so command ids and titles stay explicit for users and maintainers. — A structured command table keeps the public docs deterministic while still matching the shipped manifest titles exactly.
 
 ### Pending Todos
 
@@ -92,6 +94,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-17T04:37:13.329Z
-Stopped at: Completed 03-PLAN.md
+Last session: 2026-04-17T05:08:44.802Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
