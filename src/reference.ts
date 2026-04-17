@@ -1,4 +1,9 @@
-import type { EditorLike, ReferenceMode, WorkspaceFolderLike } from './contracts';
+import type {
+  EditorLike,
+  ReferenceMode,
+  UnsupportedEditorState,
+  WorkspaceFolderLike,
+} from './contracts';
 import { validateEditorInput } from './guards';
 import { resolveReferencePath } from './path';
 import { formatNormalizedLine, normalizeSelectionLines } from './range';
@@ -19,7 +24,7 @@ export function buildFileReference(
   editor: EditorLike | null | undefined,
   mode: ReferenceMode,
   workspaceFolders: readonly WorkspaceFolderLike[] = [],
-): ReturnType<typeof validateEditorInput> | { ok: true; value: string } {
+): { ok: true; value: string } | { ok: false; error: UnsupportedEditorState } {
   const validation = validateEditorInput(editor);
 
   if (!validation.ok) {

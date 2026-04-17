@@ -3,12 +3,34 @@ import type * as vscode from 'vscode';
 import type { EditorLike, ReferenceMode, WorkspaceFolderLike } from './contracts';
 import { buildFileReference } from './reference';
 
+export interface ClipboardService {
+  writeText(value: string): PromiseLike<void> | void;
+}
+
+export interface NotificationService {
+  showErrorMessage(message: string): PromiseLike<unknown> | unknown;
+  showInformationMessage(message: string): PromiseLike<unknown> | unknown;
+}
+
 export interface CommandEnvironment {
   activeEditor: vscode.TextEditor | EditorLike | null | undefined;
+  clipboard?: ClipboardService;
+  notifications?: NotificationService;
   workspaceFolders?: readonly vscode.WorkspaceFolder[] | readonly WorkspaceFolderLike[];
 }
 
 export type CommandExecutionResult = ReturnType<typeof buildFileReference>;
+
+export const ABSOLUTE_SUCCESS_MESSAGE = 'Copied absolute file reference';
+export const RELATIVE_SUCCESS_MESSAGE = 'Copied relative file reference';
+
+function successMessageFor(mode: ReferenceMode): string {
+  return mode === 'absolute' ? ABSOLUTE_SUCCESS_MESSAGE : RELATIVE_SUCCESS_MESSAGE;
+}
+
+function isSuccessfulResult(result: CommandExecutionResult): result is { ok: true; value: string } {
+  return result.ok;
+}
 
 export function toEditorLike(editor: vscode.TextEditor | EditorLike): EditorLike {
   if ('document' in editor && 'selection' in editor && 'uri' in editor.document) {
@@ -58,6 +80,17 @@ export async function executeCopyReferenceCommand(
 ): Promise<CommandExecutionResult> {
   const editor = environment.activeEditor ? toEditorLike(environment.activeEditor) : environment.activeEditor;
   const workspaceFolders = toWorkspaceFolderLikes(environment.workspaceFolders ?? []);
+  const result = buildFileReference(editor, mode, workspaceFolders);
 
-  return buildFileReference(editor, mode, workspaceFolders);
+  if (!isSuccessfulResult(result)) {
+    void environment.notifications?.showErrorMessage(result.error.message);
+    return result;
+  }
+
+  const reference = result.value;
+
+  await environment.clipboard?.writeText(reference);
+  void environment.notifications?.showInformationMessage(successMessageFor(mode));
+
+  return result;
 }

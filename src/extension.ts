@@ -12,6 +12,8 @@ export function activate(context: vscode.ExtensionContext): void {
       executeCopyReferenceCommand(
         {
           activeEditor: vscode.window.activeTextEditor,
+          clipboard: vscode.env.clipboard,
+          notifications: vscode.window,
           workspaceFolders: vscode.workspace.workspaceFolders,
         },
         'absolute',
@@ -21,6 +23,8 @@ export function activate(context: vscode.ExtensionContext): void {
       executeCopyReferenceCommand(
         {
           activeEditor: vscode.window.activeTextEditor,
+          clipboard: vscode.env.clipboard,
+          notifications: vscode.window,
           workspaceFolders: vscode.workspace.workspaceFolders,
         },
         'relative',
