@@ -59,14 +59,14 @@ describe('package.json contributions', () => {
     assert.deepEqual(keybindings, [
       {
         command: COPY_ABSOLUTE_REFERENCE_COMMAND,
-        key: 'ctrl+alt+k',
-        mac: 'cmd+alt+k',
+        key: 'ctrl+alt+shift+c',
+        mac: 'alt+shift+c',
         when: 'editorTextFocus && !editorReadonly && !isInDiffEditor && resourceScheme == file',
       },
       {
         command: COPY_RELATIVE_REFERENCE_COMMAND,
-        key: 'ctrl+alt+shift+k',
-        mac: 'cmd+alt+shift+k',
+        key: 'ctrl+alt+c',
+        mac: 'alt+c',
         when: 'editorTextFocus && !editorReadonly && !isInDiffEditor && resourceScheme == file',
       },
     ]);
