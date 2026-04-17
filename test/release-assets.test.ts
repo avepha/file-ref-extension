@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, it } from 'mocha';
 
@@ -15,6 +15,132 @@ const {
   requiredEntries: string[];
 };
 
+type CommandContribution = {
+  command: string;
+  title: string;
+};
+
+type KeybindingContribution = {
+  command: string;
+  key: string;
+  mac?: string;
+};
+
+type ManifestShape = {
+  contributes: {
+    commands: CommandContribution[];
+    keybindings: KeybindingContribution[];
+  };
+};
+
+type ReadmeDocs = {
+  commands: string[];
+  shortcuts: {
+    macos: { absolute: string; relative: string };
+    windowsLinux: { absolute: string; relative: string };
+  };
+};
+
+function normalizeShortcut(shortcut: string): string {
+  return shortcut.trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function getSection(readme: string, heading: string): string {
+  const pattern = new RegExp(`## ${heading}\\n([\\s\\S]*?)(?:\\n## |$)`);
+  const match = readme.match(pattern);
+
+  assert.ok(match, `README is missing the \"${heading}\" section`);
+
+  return match[1].trim();
+}
+
+function parseReadmeDocs(readme: string): ReadmeDocs {
+  const commandsSection = getSection(readme, 'Commands');
+  const shortcutsSection = getSection(readme, 'Default shortcuts');
+
+  const commands = commandsSection
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('- '))
+    .map((line) => {
+      const match = line.match(/`([^`]+)`/);
+      assert.ok(match, `README Commands section contains an unparseable command line: ${line}`);
+      return match[1];
+    });
+
+  const shortcutRows = shortcutsSection
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('|'))
+    .slice(2)
+    .map((line) => line.split('|').slice(1, -1).map((cell) => cell.trim().replace(/^`|`$/g, '')));
+
+  assert.equal(shortcutRows.length, 2, 'README Default shortcuts section should contain macOS and Windows / Linux rows');
+
+  const [macRow, windowsRow] = shortcutRows;
+
+  assert.equal(macRow[0], 'macOS', 'README Default shortcuts section should label the first row macOS');
+  assert.equal(windowsRow[0], 'Windows / Linux', 'README Default shortcuts section should label the second row Windows / Linux');
+
+  return {
+    commands,
+    shortcuts: {
+      macos: {
+        absolute: normalizeShortcut(macRow[1]),
+        relative: normalizeShortcut(macRow[2]),
+      },
+      windowsLinux: {
+        absolute: normalizeShortcut(windowsRow[1]),
+        relative: normalizeShortcut(windowsRow[2]),
+      },
+    },
+  };
+}
+
+function getExpectedReadmeDocs(manifest: ManifestShape): ReadmeDocs {
+  const commandTitles = manifest.contributes.commands.map((command) => command.title);
+  const keybindingByCommand = new Map(manifest.contributes.keybindings.map((binding) => [binding.command, binding]));
+
+  const absoluteBinding = keybindingByCommand.get('fileReference.copyAbsoluteReference');
+  const relativeBinding = keybindingByCommand.get('fileReference.copyRelativeReference');
+
+  assert.ok(absoluteBinding, 'Manifest missing absolute reference keybinding');
+  assert.ok(relativeBinding, 'Manifest missing relative reference keybinding');
+
+  return {
+    commands: commandTitles,
+    shortcuts: {
+      macos: {
+        absolute: normalizeShortcut(absoluteBinding.mac ?? ''),
+        relative: normalizeShortcut(relativeBinding.mac ?? ''),
+      },
+      windowsLinux: {
+        absolute: normalizeShortcut(absoluteBinding.key),
+        relative: normalizeShortcut(relativeBinding.key),
+      },
+    },
+  };
+}
+
+function assertReadmeSectionMatches(sectionName: string, actual: unknown, expected: unknown): void {
+  try {
+    assert.deepEqual(actual, expected);
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    throw new assert.AssertionError({
+      message: `README ${sectionName} section drifted from package.json.\n${details}`,
+    });
+  }
+}
+
+function assertReadmeMatchesManifest(readme: string, manifest: ManifestShape): void {
+  const actualDocs = parseReadmeDocs(readme);
+  const expectedDocs = getExpectedReadmeDocs(manifest);
+
+  assertReadmeSectionMatches('Commands', actualDocs.commands, expectedDocs.commands);
+  assertReadmeSectionMatches('Default shortcuts', actualDocs.shortcuts, expectedDocs.shortcuts);
+}
+
 describe('release assets', () => {
   const packagedRuntimeEntries = [
     'extension/package.json',
@@ -24,6 +150,8 @@ describe('release assets', () => {
     'extension/LICENSE.txt',
     'extension/media/icon.png',
   ];
+  const readme = readFileSync(rootPath('README.md'), 'utf8');
+  const manifest = JSON.parse(readFileSync(rootPath('package.json'), 'utf8')) as ManifestShape;
 
   it('checks in the root files needed for public distribution', () => {
     for (const relativePath of ['README.md', 'CHANGELOG.md', 'LICENSE', '.vscodeignore', 'docs/release-checklist.md', 'media/icon.png']) {
@@ -33,6 +161,19 @@ describe('release assets', () => {
 
   it('checks in the release validation workflow', () => {
     assert.equal(existsSync(rootPath('.github', 'workflows', 'release-validation.yml')), true);
+  });
+
+  it('keeps README command titles and platform shortcuts aligned with the manifest', () => {
+    assert.doesNotThrow(() => assertReadmeMatchesManifest(readme, manifest));
+  });
+
+  it('fails with a section-specific message when README shortcuts drift from the manifest', () => {
+    const driftedReadme = readme.replace('`Alt+C`', '`Cmd+Option+Shift+K`');
+
+    assert.throws(
+      () => assertReadmeMatchesManifest(driftedReadme, manifest),
+      /README Default shortcuts section drifted from package\.json/,
+    );
   });
 
   it('requires the packaged VSIX to include all publishable runtime assets', () => {
