@@ -51,6 +51,16 @@ describe('resolveReferencePath', () => {
     );
   });
 
+  it('prefers the deepest containing workspace folder in nested multi-root setups', () => {
+    assert.equal(
+      resolveReferencePath('/repo/packages/app/src/main.ts', 'relative', [
+        { uri: { fsPath: '/repo' } },
+        { uri: { fsPath: '/repo/packages/app' } },
+      ]),
+      'src/main.ts',
+    );
+  });
+
   it('preserves Windows drive letters while normalizing separators', () => {
     assert.equal(
       resolveReferencePath('C:\\repo\\src\\main.ts', 'absolute'),

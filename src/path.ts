@@ -48,9 +48,9 @@ export function resolveReferencePath(
     return absolutePath;
   }
 
-  const containingFolder = workspaceFolders.find((folder) =>
-    isContainingFolder(folder.uri.fsPath, documentPath),
-  );
+  const containingFolder = workspaceFolders
+    .filter((folder) => isContainingFolder(folder.uri.fsPath, documentPath))
+    .sort((left, right) => right.uri.fsPath.length - left.uri.fsPath.length)[0];
 
   if (!containingFolder) {
     return absolutePath;
