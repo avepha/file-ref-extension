@@ -1,6 +1,6 @@
 ---
 phase: 03
-fixed_at: 2026-04-17T04:53:21Z
+fixed_at: 2026-04-17T05:05:58Z
 review_path: .planning/phases/03-release-readiness/03-REVIEW.md
 iteration: 1
 findings_in_scope: 2
@@ -11,7 +11,7 @@ status: all_fixed
 
 # Phase 03: Code Review Fix Report
 
-**Fixed at:** 2026-04-17T04:53:21Z
+**Fixed at:** 2026-04-17T05:05:58Z
 **Source review:** `.planning/phases/03-release-readiness/03-REVIEW.md`
 **Iteration:** 1
 
@@ -22,22 +22,22 @@ status: all_fixed
 
 ## Fixed Issues
 
-### WR-01: CI packaging job skips VSIX hygiene inspection
-
-**Files modified:** `.github/workflows/release-validation.yml`
-**Commit:** `79938bb`
-**Applied fix:** Added `npm run package:inspect` to the release packaging workflow so CI enforces VSIX hygiene after packaging.
-**Validation:** Tier 1 re-read confirmed the new workflow step is present and scoped correctly.
-
-### WR-02: VSIX validation only checks for forbidden files, not required packaged assets
+### WR-01: Real VSIX inspection is broken by incorrect expected entry names
 
 **Files modified:** `scripts/inspect-vsix.js`, `test/release-assets.test.ts`
-**Commit:** `bebdcf2`
-**Applied fix:** Extended VSIX inspection to fail on missing required packaged assets and added tests that exercise the stricter packaged-asset contract.
-**Validation:** `node -c scripts/inspect-vsix.js`; `npx tsc --noEmit --project tsconfig.json`; `npm run compile-tests && npx mocha ".build/test/release-assets.test.js"` ✅
+**Commit:** `eee265a`
+**Applied fix:** Updated the VSIX required entry allowlist to match actual `vsce` output and changed the release asset test to assert against a fixture with the real packaged filenames instead of echoing `requiredEntries` back into the inspector.
+**Validation:** `node -c scripts/inspect-vsix.js` passed; `npm test` passed; `node scripts/inspect-vsix.js` passed against `file-reference-0.0.1.vsix`.
+
+### WR-02: Published shortcut documentation does not match the manifest
+
+**Files modified:** `README.md`
+**Commit:** `1318f3f`
+**Applied fix:** Updated the published shortcut table so the documented macOS and Windows/Linux bindings match the actual keybindings contributed in `package.json`.
+**Validation:** Re-read the README shortcut table and verified it against the manifest; `node -e 'const fs=require("node:fs"); const readme=fs.readFileSync("README.md","utf8"); const expected=["| macOS | `Alt+Shift+C` | `Alt+C` |","| Windows / Linux | `Ctrl+Alt+Shift+C` | `Ctrl+Alt+C` |"]; for (const line of expected) { if (!readme.includes(line)) throw new Error(`README missing expected shortcut row: ${line}`); }'` passed.
 
 ---
 
-_Fixed: 2026-04-17T04:53:21Z_
+_Fixed: 2026-04-17T05:05:58Z_
 _Fixer: the agent (gsd-code-fixer)_
 _Iteration: 1_
