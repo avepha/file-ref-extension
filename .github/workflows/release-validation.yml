@@ -25,6 +25,7 @@ jobs:
       - run: npm run build
       - run: npm run typecheck
       - run: npm run test
+      - run: npm run audit:check
 
   package:
     name: Package VSIX
@@ -36,5 +37,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run audit:check
       - run: npm run package
       - run: npm run package:inspect

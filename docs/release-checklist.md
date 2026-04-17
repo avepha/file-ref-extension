@@ -3,8 +3,9 @@
 ## Local validation
 
 1. Run `npm install` if dependencies changed.
-2. Run `npm run release:check`.
-3. Confirm `npm run package:inspect` passes so the generated VSIX only contains the bundled runtime, manifest, release docs, and icon.
+2. Run `npm run audit:check` and resolve any high-severity findings before packaging or publish.
+3. Run `npm run release:check`.
+4. Confirm `npm run package:inspect` passes so the generated VSIX only contains the bundled runtime, manifest, release docs, and icon.
 
 ## Marketplace prerequisites
 
@@ -22,9 +23,10 @@
 ## Publish steps
 
 1. Update `package.json` version and add release notes to `CHANGELOG.md`.
-2. Run `npm run package` and keep the generated `.vsix` as the release artifact.
-3. Publish to VS Code Marketplace with `npm run publish:marketplace`.
-4. Publish the same version to Open VSX with `npm run publish:openvsx`.
+2. Re-run `npm run audit:check` if dependencies changed since local validation; do not continue until the audit gate is clean.
+3. Run `npm run package` and keep the generated `.vsix` as the release artifact.
+4. Publish to VS Code Marketplace with `npm run publish:marketplace`.
+5. Publish the same version to Open VSX with `npm run publish:openvsx`.
 
 ## Cross-platform verification matrix
 
