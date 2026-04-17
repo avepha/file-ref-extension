@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/avepha/file-ref-extension/compare/v1.0.0...v1.0.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* clarify release workflow wording ([120f071](https://github.com/avepha/file-ref-extension/commit/120f071542d05cd7c9fd4345fe823585c22fe7c9))
+
 # 1.0.0 (2026-04-17)
 
 
