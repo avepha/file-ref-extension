@@ -68,6 +68,7 @@
     ]
   },
   "scripts": {
+    "audit:check": "npm audit --audit-level=high",
     "build": "node esbuild.js",
     "typecheck": "tsc --noEmit",
     "compile-tests": "tsc --outDir .build",
@@ -77,16 +78,22 @@
     "package:inspect": "node scripts/inspect-vsix.js",
     "publish:marketplace": "vsce publish",
     "publish:openvsx": "ovsx publish",
-    "release:check": "npm run build && npm run typecheck && npm run test && npm run package && npm run package:inspect"
+    "release:check": "npm run build && npm run typecheck && npm run test && npm run audit:check && npm run package && npm run package:inspect"
   },
   "devDependencies": {
-    "@vscode/vsce": "^3.9.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.6.0",
     "@types/vscode": "^1.100.0",
+    "@vscode/vsce": "^3.9.0",
     "esbuild": "^0.25.0",
     "mocha": "^11.7.5",
     "ovsx": "^0.10.11",
     "typescript": "^5.9.2"
+  },
+  "overrides": {
+    "mocha": {
+      "diff": "8.0.4",
+      "serialize-javascript": "7.0.5"
+    }
   }
 }
