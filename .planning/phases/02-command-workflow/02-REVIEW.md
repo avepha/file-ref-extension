@@ -1,6 +1,6 @@
 ---
 phase: 02-command-workflow
-reviewed: 2026-04-17T04:30:16Z
+reviewed: 2026-04-17T04:38:51Z
 depth: deep
 files_reviewed: 7
 files_reviewed_list:
@@ -11,6 +11,10 @@ files_reviewed_list:
   - package.json
   - src/extension.ts
   - src/reference.ts
+critical: 0
+warning: 2
+info: 0
+total: 2
 findings:
   critical: 0
   warning: 2
@@ -21,22 +25,22 @@ status: issues_found
 
 # Phase 02: Code Review Report
 
-**Reviewed:** 2026-04-17T04:30:16Z
+**Reviewed:** 2026-04-17T04:38:51Z
 **Depth:** deep
 **Files Reviewed:** 7
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the command-registration, workflow, reference-building, manifest, and related tests. Deep tracing through `extension -> workflow -> reference -> guards/path/range` found no critical security issues, but there are two behavioral gaps in the command flow that can produce incorrect or unclear runtime behavior.
+Reviewed the command registration, manifest wiring, workflow adapter, reference builder, and related tests. Tracing the runtime path from `src/extension.ts` through `src/workflow.ts` into `src/reference.ts` and its dependencies found no critical security issues, but there are two command-flow bugs that can produce unclear or unsupported behavior at runtime.
 
 ## Warnings
 
-### WR-01: Clipboard write failures are not handled in the command workflow
+### WR-01: Clipboard write failures are surfaced as generic command errors
 
 **File:** `src/workflow.ts:90-93`
-**Issue:** `executeCopyReferenceCommand()` awaits `clipboard.writeText()` directly. If the clipboard provider rejects or throws, the command promise fails before any user-facing error is shown. That turns a recoverable copy failure into a generic command error and breaks the project's requirement to fail clearly.
-**Fix:** Catch clipboard failures, show an explicit error notification, and return a structured failure (or rethrow only after notifying).
+**Issue:** `executeCopyReferenceCommand()` awaits `clipboard.writeText()` without handling rejection. If clipboard access fails, the command aborts before showing a user-facing error, which violates the project requirement to fail clearly for unsupported or failed states.
+**Fix:** Wrap the clipboard write in `try/catch`, show an explicit error message, and return a structured failure result instead of letting the promise reject silently from the workflow layer.
 
 ```ts
 try {
@@ -53,11 +57,11 @@ try {
 }
 ```
 
-### WR-02: Diff editors can still execute from the Command Palette without being rejected
+### WR-02: Diff-editor rejection is unreachable in the real extension path
 
 **File:** `src/extension.ts:11-31`, `src/workflow.ts:35-64`
-**Issue:** The manifest blocks diff editors only in keybindings (`!isInDiffEditor`), but the commands are still callable from the Command Palette. In the real extension path, `toEditorLike()` rebuilds a minimal editor object and does not preserve any diff-editor signal, so `validateEditorInput()` cannot reject this unsupported state. In a saved file diff, the extension can therefore copy a side-specific path instead of failing clearly.
-**Fix:** Detect diff editors before or during adaptation and pass that state into the validated `EditorLike` object.
+**Issue:** The manifest blocks diff editors only for keybindings, but the commands remain callable from the Command Palette. `validateEditorInput()` supports rejecting `diff-editor`, yet `toEditorLike()` rebuilds a minimal editor object and drops any diff-editor context, so that guard cannot trigger for real `vscode.TextEditor` instances. The command can therefore run in a diff editor and copy a side-specific path instead of failing clearly.
+**Fix:** Detect diff-editor state before calling `executeCopyReferenceCommand()` and preserve it in the adapted editor contract passed to validation.
 
 ```ts
 const tab = vscode.window.tabGroups.activeTabGroup.activeTab;
@@ -74,6 +78,6 @@ const editorLike = editor
 
 ---
 
-_Reviewed: 2026-04-17T04:30:16Z_
+_Reviewed: 2026-04-17T04:38:51Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
