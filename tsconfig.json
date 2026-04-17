@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    "lib": ["ES2024"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "outDir": ".build",
+    "types": ["node", "mocha"]
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
