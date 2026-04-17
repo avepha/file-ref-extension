@@ -98,8 +98,9 @@ describe('package.json contributions', () => {
     ]);
     assert.equal(pkg.scripts?.['vscode:prepublish'], 'npm run build');
     assert.equal(pkg.scripts?.package, 'vsce package');
+    assert.equal(pkg.scripts?.['package:inspect'], 'node scripts/inspect-vsix.js');
     assert.equal(pkg.scripts?.['publish:marketplace'], 'vsce publish');
     assert.equal(pkg.scripts?.['publish:openvsx'], 'ovsx publish');
-    assert.equal(pkg.scripts?.['release:check'], 'npm run build && npm run typecheck && npm run test && npm run package');
+    assert.equal(pkg.scripts?.['release:check'], 'npm run build && npm run typecheck && npm run test && npm run package && npm run package:inspect');
   });
 });

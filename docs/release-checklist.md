@@ -4,7 +4,7 @@
 
 1. Run `npm install` if dependencies changed.
 2. Run `npm run release:check`.
-3. Confirm the generated VSIX only contains the bundled runtime, manifest, release docs, and icon.
+3. Confirm `npm run package:inspect` passes so the generated VSIX only contains the bundled runtime, manifest, release docs, and icon.
 
 ## Marketplace prerequisites
 

@@ -1,10 +1,12 @@
 .build/**
 .github/**
 .planning/**
+.vscode/**
 .gitignore
 AGENTS.md
 learning/**
 PRODUCT_REQUIREMENTS.md
+scripts/**
 src/**
 test/**
 tsconfig.json

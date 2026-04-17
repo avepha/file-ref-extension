@@ -38,7 +38,7 @@ npm run test
 
 ## Release workflow
 
-- `npm run release:check` validates build, types, tests, and VSIX packaging.
+- `npm run release:check` validates build, types, tests, VSIX packaging, and inspects the archive for dev-only files.
 - `npm run publish:marketplace` publishes to VS Code Marketplace after `vsce login <publisher>`.
 - `npm run publish:openvsx` publishes to Open VSX after `ovsx create-namespace <publisher>` and `ovsx publish` authentication setup.
 
