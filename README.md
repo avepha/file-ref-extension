@@ -45,7 +45,7 @@ npm run test
 ## Release workflow
 
 - Pull requests are validated by `.github/workflows/release-validation.yml`.
-- Pushes to `main` run `.github/workflows/release.yml`, where `semantic-release` calculates the next SemVer from commit messages, updates `package.json`, `package-lock.json`, and `CHANGELOG.md`, then packages one versioned VSIX and publishes that same file to both VS Code Marketplace and Open VSX.
+- Pushes to `main` run `.github/workflows/release.yml`, where `semantic-release` calculates the next SemVer from commit messages and updates `package.json`, `package-lock.json`, and `CHANGELOG.md`. The workflow then packages one versioned VSIX and publishes that same file to both VS Code Marketplace and Open VSX.
 - Required repository secrets: `VSCE_PAT` for VS Code Marketplace and `OVSX_PAT` for Open VSX. `GITHUB_TOKEN` comes from GitHub Actions automatically.
 
 ### Commit rules
