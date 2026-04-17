@@ -70,8 +70,9 @@
   "scripts": {
     "audit:check": "npm audit --audit-level=high",
     "build": "node esbuild.js",
+    "clean:build": "rm -rf .build",
     "typecheck": "tsc --noEmit",
-    "compile-tests": "tsc --outDir .build",
+    "compile-tests": "npm run clean:build && tsc --outDir .build",
     "test": "npm run compile-tests && mocha \".build/test/**/*.test.js\"",
     "vscode:prepublish": "npm run build",
     "package": "vsce package",
