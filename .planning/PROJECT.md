@@ -12,16 +12,16 @@ Copy a correct, paste-ready file reference from VS Code instantly, with predicta
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Users can copy an absolute file path with the current line or selected line range from the active editor. Validated in Phase 1 and shipped through the Phase 2 command flow.
+- [x] Users can copy a workspace-relative file path with the current line or selected line range, falling back to absolute when the file is outside the workspace. Validated in Phase 1 and shipped through the Phase 2 command flow.
+- [x] Copied references always use deterministic `path:line` or `path:start-end` formatting with normalized ranges and POSIX-style forward slashes. Validated in Phase 1 and covered by release verification in Phase 3.
+- [x] The extension provides both Command Palette commands and default keyboard shortcuts on macOS, Windows, and Linux. Implemented in Phase 2 and release-documented in Phase 3, with Windows/Linux live smoke tests still deferred in `03-HUMAN-UAT.md`.
+- [x] Successful copies write directly to the clipboard and show a success toast; unsupported editor states show a clear error message. Validated in Phase 2 and carried through Phase 3 release verification.
+- [x] The MVP is suitable for public release on VS Code Marketplace and Open VSX. Validated in Phase 3 aside from deferred credentialed publish and non-macOS manual smoke confirmation tracked in `03-HUMAN-UAT.md`.
 
 ### Active
 
-- [ ] Users can copy an absolute file path with the current line or selected line range from the active editor.
-- [ ] Users can copy a workspace-relative file path with the current line or selected line range, falling back to absolute when the file is outside the workspace.
-- [ ] Copied references always use deterministic `path:line` or `path:start-end` formatting with normalized ranges and POSIX-style forward slashes.
-- [ ] The extension provides both Command Palette commands and default keyboard shortcuts on macOS, Windows, and Linux.
-- [ ] Successful copies write directly to the clipboard and show a success toast; unsupported editor states show a clear error message.
-- [ ] The MVP is suitable for public release on VS Code Marketplace and Open VSX.
+- None.
 
 ### Out of Scope
 
@@ -70,4 +70,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-17 after initialization*
+*Last updated: 2026-04-17 after Phase 3 completion*
