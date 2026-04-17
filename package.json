@@ -4,7 +4,25 @@
   "description": "Copy AI-friendly file references from the active editor.",
   "version": "0.0.1",
   "publisher": "farhan",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/farhan/file-ref-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farhan/file-ref-extension/issues"
+  },
+  "homepage": "https://github.com/farhan/file-ref-extension#readme",
+  "icon": "media/icon.png",
+  "pricing": "Free",
+  "keywords": [
+    "ai",
+    "claude-code",
+    "opencode",
+    "file-reference",
+    "path",
+    "clipboard"
+  ],
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -27,25 +45,25 @@
     "commands": [
       {
         "command": "fileReference.copyAbsoluteReference",
-        "title": "File Reference: Copy Absolute Reference"
+        "title": "File Reference: Copy Absolute Path with Line"
       },
       {
         "command": "fileReference.copyRelativeReference",
-        "title": "File Reference: Copy Relative Reference"
+        "title": "File Reference: Copy Relative Path with Line"
       }
     ],
     "keybindings": [
       {
         "command": "fileReference.copyAbsoluteReference",
-        "key": "ctrl+alt+shift+c",
-        "mac": "cmd+alt+shift+c",
-        "when": "editorTextFocus && !editorReadonly && resourceScheme == file"
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
+        "when": "editorTextFocus && !editorReadonly && !isInDiffEditor && resourceScheme == file"
       },
       {
         "command": "fileReference.copyRelativeReference",
-        "key": "ctrl+alt+shift+r",
-        "mac": "cmd+alt+shift+r",
-        "when": "editorTextFocus && !editorReadonly && resourceScheme == file"
+        "key": "ctrl+alt+shift+k",
+        "mac": "cmd+alt+shift+k",
+        "when": "editorTextFocus && !editorReadonly && !isInDiffEditor && resourceScheme == file"
       }
     ]
   },
@@ -53,14 +71,21 @@
     "build": "node esbuild.js",
     "typecheck": "tsc --noEmit",
     "compile-tests": "tsc --outDir .build",
-    "test": "npm run compile-tests && mocha \".build/test/**/*.test.js\""
+    "test": "npm run compile-tests && mocha \".build/test/**/*.test.js\"",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package",
+    "publish:marketplace": "vsce publish",
+    "publish:openvsx": "ovsx publish",
+    "release:check": "npm run build && npm run typecheck && npm run test && npm run package"
   },
   "devDependencies": {
+    "@vscode/vsce": "^3.9.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.6.0",
     "@types/vscode": "^1.100.0",
     "esbuild": "^0.25.0",
     "mocha": "^11.7.5",
+    "ovsx": "^0.10.11",
     "typescript": "^5.9.2"
   }
 }

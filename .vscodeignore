@@ -1,0 +1,13 @@
+.build/**
+.github/**
+.planning/**
+.gitignore
+AGENTS.md
+learning/**
+PRODUCT_REQUIREMENTS.md
+src/**
+test/**
+tsconfig.json
+esbuild.js
+package-lock.json
+**/*.ts
