@@ -43,12 +43,18 @@ export function toEditorLike(
   editor: vscode.TextEditor | EditorLike,
   overrides: Partial<EditorLike> = {},
 ): EditorLike {
-  if ('document' in editor && 'selection' in editor && 'uri' in editor.document) {
+  const looksPlainEditorLike =
+    'document' in editor &&
+    'selection' in editor &&
+    'uri' in editor.document &&
+    'anchor' in editor.selection &&
+    'active' in editor.selection &&
+    !('edit' in editor);
+
+  if (looksPlainEditorLike) {
     const candidate = editor as EditorLike;
 
-    if ('anchor' in candidate.selection && 'active' in candidate.selection) {
-      return Object.keys(overrides).length === 0 ? candidate : { ...candidate, ...overrides };
-    }
+    return Object.keys(overrides).length === 0 ? candidate : { ...candidate, ...overrides };
   }
 
   const vscodeEditor = editor as vscode.TextEditor;

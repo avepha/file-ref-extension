@@ -43,6 +43,40 @@ describe('workflow adapters', () => {
     });
   });
 
+  it('normalizes vscode-like editors with accessor-backed fields before applying overrides', () => {
+    const document = {
+      uri: {
+        scheme: 'file',
+        fsPath: '/workspace/app/src/feature.ts',
+      },
+      isUntitled: false,
+    };
+    const selection = {
+      anchor: { line: 7, character: 0 },
+      active: { line: 7, character: 4 },
+    };
+
+    const vscodeLikeEditor = Object.create(
+      {
+        get document() {
+          return document;
+        },
+        get selection() {
+          return selection;
+        },
+        edit(): Promise<boolean> {
+          return Promise.resolve(true);
+        },
+      },
+    ) as EditorLike & { edit(): Promise<boolean> };
+
+    assert.deepEqual(toEditorLike(vscodeLikeEditor, { isDiffEditor: true }), {
+      document,
+      selection,
+      isDiffEditor: true,
+    });
+  });
+
   it('normalizes workspace folders to the plain contract', () => {
     const workspaceFolders: WorkspaceFolderLike[] = [
       { uri: { fsPath: '/workspace/app' } },
