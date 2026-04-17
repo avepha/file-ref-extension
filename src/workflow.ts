@@ -3,6 +3,11 @@ import type * as vscode from 'vscode';
 import type { EditorLike, ReferenceMode, WorkspaceFolderLike } from './contracts';
 import { buildFileReference } from './reference';
 
+interface ClipboardWriteFailedError {
+  reason: 'clipboard-write-failed';
+  message: string;
+}
+
 export interface ClipboardService {
   writeText(value: string): PromiseLike<void> | void;
 }
@@ -19,7 +24,9 @@ export interface CommandEnvironment {
   workspaceFolders?: readonly vscode.WorkspaceFolder[] | readonly WorkspaceFolderLike[];
 }
 
-export type CommandExecutionResult = ReturnType<typeof buildFileReference>;
+export type CommandExecutionResult =
+  | ReturnType<typeof buildFileReference>
+  | { ok: false; error: ClipboardWriteFailedError };
 
 export const ABSOLUTE_SUCCESS_MESSAGE = 'Copied absolute file reference';
 export const RELATIVE_SUCCESS_MESSAGE = 'Copied relative file reference';
@@ -89,7 +96,22 @@ export async function executeCopyReferenceCommand(
 
   const reference = result.value;
 
-  await environment.clipboard?.writeText(reference);
+  try {
+    await environment.clipboard?.writeText(reference);
+  } catch {
+    const message = 'Failed to copy file reference';
+
+    void environment.notifications?.showErrorMessage(message);
+
+    return {
+      ok: false,
+      error: {
+        reason: 'clipboard-write-failed',
+        message,
+      },
+    };
+  }
+
   void environment.notifications?.showInformationMessage(successMessageFor(mode));
 
   return result;
