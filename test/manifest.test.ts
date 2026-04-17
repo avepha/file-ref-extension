@@ -61,13 +61,13 @@ describe('package.json contributions', () => {
         command: COPY_ABSOLUTE_REFERENCE_COMMAND,
         key: 'ctrl+alt+shift+c',
         mac: 'alt+shift+c',
-        when: 'editorTextFocus && !editorReadonly && !isInDiffEditor && resourceScheme == file',
+        when: 'editorTextFocus && !isInDiffEditor && resourceScheme == file',
       },
       {
         command: COPY_RELATIVE_REFERENCE_COMMAND,
         key: 'ctrl+alt+c',
         mac: 'alt+c',
-        when: 'editorTextFocus && !editorReadonly && !isInDiffEditor && resourceScheme == file',
+        when: 'editorTextFocus && !isInDiffEditor && resourceScheme == file',
       },
     ]);
   });
