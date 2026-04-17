@@ -16,6 +16,15 @@ const {
 };
 
 describe('release assets', () => {
+  const packagedRuntimeEntries = [
+    'extension/package.json',
+    'extension/dist/extension.js',
+    'extension/readme.md',
+    'extension/changelog.md',
+    'extension/LICENSE.txt',
+    'extension/media/icon.png',
+  ];
+
   it('checks in the root files needed for public distribution', () => {
     for (const relativePath of ['README.md', 'CHANGELOG.md', 'LICENSE', '.vscodeignore', 'docs/release-checklist.md', 'media/icon.png']) {
       assert.equal(existsSync(rootPath(relativePath)), true, `${relativePath} should exist`);
@@ -27,7 +36,8 @@ describe('release assets', () => {
   });
 
   it('requires the packaged VSIX to include all publishable runtime assets', () => {
-    assert.doesNotThrow(() => inspectEntries([...requiredEntries]));
+    assert.doesNotThrow(() => inspectEntries([...packagedRuntimeEntries]));
+    assert.deepEqual(requiredEntries, packagedRuntimeEntries);
   });
 
   it('fails when the packaged VSIX is missing a required runtime asset', () => {

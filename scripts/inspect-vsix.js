@@ -4,9 +4,9 @@ const path = require('node:path');
 const requiredEntries = [
   'extension/package.json',
   'extension/dist/extension.js',
-  'extension/README.md',
-  'extension/CHANGELOG.md',
-  'extension/LICENSE',
+  'extension/readme.md',
+  'extension/changelog.md',
+  'extension/LICENSE.txt',
   'extension/media/icon.png',
 ];
 
