@@ -111,5 +111,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Reference Engine | 2/2 | Complete | 2026-04-17 |
-| 2. Command Workflow | 0/2 | Not started | - |
-| 3. Release Readiness | 0/1 | Not started | - |
+| 2. Command Workflow | 2/2 | Complete | 2026-04-17 |
+| 3. Release Readiness | 1/1 | Complete | 2026-04-17 |

@@ -32,8 +32,8 @@
 
 ### Release Quality
 
-- [ ] **REL-01**: Maintainer can package and publish the extension to VS Code Marketplace and Open VSX.
-- [ ] **REL-02**: Users get consistent copy behavior on macOS, Windows, and Linux.
+- [x] **REL-01**: Maintainer can package and publish the extension to VS Code Marketplace and Open VSX.
+- [x] **REL-02**: Users get consistent copy behavior on macOS, Windows, and Linux.
 
 ## v2 Requirements
 
@@ -79,8 +79,8 @@
 | CLIP-01 | Phase 2 | Complete |
 | CLIP-02 | Phase 2 | Complete |
 | CLIP-03 | Phase 2 | Complete |
-| REL-01 | Phase 3 | Pending |
-| REL-02 | Phase 3 | Pending |
+| REL-01 | Phase 3 | Complete |
+| REL-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 15 total
