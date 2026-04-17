@@ -79,14 +79,15 @@ describe('package.json contributions', () => {
     assert.equal(pkg.description, 'Copy AI-friendly file references from the active editor.');
     assert.equal(pkg.license, 'SEE LICENSE IN LICENSE');
     assert.equal(pkg.pricing, 'Free');
+    assert.equal((pkg as PackageJson & { publisher?: string }).publisher, 'avepha');
     assert.deepEqual(pkg.repository, {
       type: 'git',
-      url: 'https://github.com/farhan/file-ref-extension.git',
+      url: 'https://github.com/avepha/file-ref-extension.git',
     });
     assert.deepEqual(pkg.bugs, {
-      url: 'https://github.com/farhan/file-ref-extension/issues',
+      url: 'https://github.com/avepha/file-ref-extension/issues',
     });
-    assert.equal(pkg.homepage, 'https://github.com/farhan/file-ref-extension#readme');
+    assert.equal(pkg.homepage, 'https://github.com/avepha/file-ref-extension#readme');
     assert.equal(pkg.icon, 'media/icon.png');
     assert.deepEqual(pkg.keywords, [
       'ai',
