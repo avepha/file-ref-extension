@@ -34,6 +34,15 @@ describe('workflow adapters', () => {
     assert.equal(toEditorLike(editor), editor);
   });
 
+  it('applies editor metadata overrides without losing the plain contract', () => {
+    const editor = createEditor();
+
+    assert.deepEqual(toEditorLike(editor, { isDiffEditor: true }), {
+      ...editor,
+      isDiffEditor: true,
+    });
+  });
+
   it('normalizes workspace folders to the plain contract', () => {
     const workspaceFolders: WorkspaceFolderLike[] = [
       { uri: { fsPath: '/workspace/app' } },
@@ -149,6 +158,40 @@ describe('executeCopyReferenceCommand', () => {
     assert.equal(result.ok, false);
     if (!result.ok) {
       assert.equal(result.error.reason, 'untitled-document');
+      assert.equal(result.error.message, 'No saved local text file is active');
+    }
+    assert.deepEqual(clipboardWrites, []);
+    assert.deepEqual(errorMessages, ['No saved local text file is active']);
+  });
+
+  it('rejects diff editors before building a reference', async () => {
+    const clipboardWrites: string[] = [];
+    const errorMessages: string[] = [];
+
+    const result = await executeCopyReferenceCommand(
+      {
+        activeEditor: createEditor({ isDiffEditor: true }),
+        clipboard: {
+          async writeText(value: string): Promise<void> {
+            clipboardWrites.push(value);
+          },
+        },
+        notifications: {
+          showErrorMessage(message: string): string {
+            errorMessages.push(message);
+            return message;
+          },
+          showInformationMessage(message: string): string {
+            throw new Error(`unexpected success message: ${message}`);
+          },
+        },
+      },
+      'absolute',
+    );
+
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.equal(result.error.reason, 'diff-editor');
       assert.equal(result.error.message, 'No saved local text file is active');
     }
     assert.deepEqual(clipboardWrites, []);

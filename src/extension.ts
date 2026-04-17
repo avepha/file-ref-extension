@@ -4,14 +4,27 @@ import {
   COPY_ABSOLUTE_REFERENCE_COMMAND,
   COPY_RELATIVE_REFERENCE_COMMAND,
 } from './commands';
-import { executeCopyReferenceCommand } from './workflow';
+import { executeCopyReferenceCommand, toEditorLike } from './workflow';
+
+function getActiveEditorForCommand(): vscode.TextEditor | ReturnType<typeof toEditorLike> | undefined {
+  const editor = vscode.window.activeTextEditor;
+
+  if (!editor) {
+    return editor;
+  }
+
+  const tab = vscode.window.tabGroups.activeTabGroup.activeTab;
+  const isDiffEditor = tab?.input instanceof vscode.TabInputTextDiff;
+
+  return toEditorLike(editor, { isDiffEditor });
+}
 
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(COPY_ABSOLUTE_REFERENCE_COMMAND, async () =>
       executeCopyReferenceCommand(
         {
-          activeEditor: vscode.window.activeTextEditor,
+          activeEditor: getActiveEditorForCommand(),
           clipboard: vscode.env.clipboard,
           notifications: vscode.window,
           workspaceFolders: vscode.workspace.workspaceFolders,
@@ -22,7 +35,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand(COPY_RELATIVE_REFERENCE_COMMAND, async () =>
       executeCopyReferenceCommand(
         {
-          activeEditor: vscode.window.activeTextEditor,
+          activeEditor: getActiveEditorForCommand(),
           clipboard: vscode.env.clipboard,
           notifications: vscode.window,
           workspaceFolders: vscode.workspace.workspaceFolders,

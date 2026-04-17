@@ -39,12 +39,15 @@ function isSuccessfulResult(result: CommandExecutionResult): result is { ok: tru
   return result.ok;
 }
 
-export function toEditorLike(editor: vscode.TextEditor | EditorLike): EditorLike {
+export function toEditorLike(
+  editor: vscode.TextEditor | EditorLike,
+  overrides: Partial<EditorLike> = {},
+): EditorLike {
   if ('document' in editor && 'selection' in editor && 'uri' in editor.document) {
     const candidate = editor as EditorLike;
 
     if ('anchor' in candidate.selection && 'active' in candidate.selection) {
-      return candidate;
+      return Object.keys(overrides).length === 0 ? candidate : { ...candidate, ...overrides };
     }
   }
 
@@ -68,6 +71,7 @@ export function toEditorLike(editor: vscode.TextEditor | EditorLike): EditorLike
         character: vscodeEditor.selection.active.character,
       },
     },
+    ...overrides,
   };
 }
 
