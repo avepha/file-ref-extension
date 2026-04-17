@@ -199,4 +199,11 @@ describe('release assets', () => {
       /VSIX is missing required files:\nextension\/dist\/extension\.js/,
     );
   });
+
+  it('fails when the packaged VSIX includes an unexpected file', () => {
+    assert.throws(
+      () => inspectEntries([...packagedRuntimeEntries, 'extension/src/extension.ts']),
+      /VSIX contains unexpected files:\nextension\/src\/extension\.ts/,
+    );
+  });
 });

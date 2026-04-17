@@ -1,7 +1,7 @@
 const { existsSync, readFileSync } = require('node:fs');
 const path = require('node:path');
 
-const requiredEntries = [
+const allowedEntries = [
   'extension/package.json',
   'extension/dist/extension.js',
   'extension/readme.md',
@@ -10,23 +10,8 @@ const requiredEntries = [
   'extension/media/icon.png',
 ];
 
-const forbiddenPrefixes = [
-  'extension/.vscode/',
-  'extension/.github/',
-  'extension/.planning/',
-  'extension/learning/',
-  'extension/scripts/',
-  'extension/src/',
-  'extension/test/',
-];
-
-const forbiddenEntries = new Set([
-  'extension/AGENTS.md',
-  'extension/PRODUCT_REQUIREMENTS.md',
-  'extension/esbuild.js',
-  'extension/package-lock.json',
-  'extension/tsconfig.json',
-]);
+const allowedEntrySet = new Set(allowedEntries);
+const requiredEntries = allowedEntries;
 
 function readZipEntries(zipBuffer) {
   const entries = [];
@@ -55,13 +40,10 @@ function readZipEntries(zipBuffer) {
 }
 
 function inspectEntries(entries) {
-  const unexpectedEntries = entries.filter((entry) => (
-    forbiddenPrefixes.some((prefix) => entry.startsWith(prefix))
-    || forbiddenEntries.has(entry)
-  ));
+  const unexpectedEntries = entries.filter((entry) => !allowedEntrySet.has(entry));
 
   if (unexpectedEntries.length > 0) {
-    throw new Error(`VSIX contains development-only files:\n${unexpectedEntries.join('\n')}`);
+    throw new Error(`VSIX contains unexpected files:\n${unexpectedEntries.join('\n')}`);
   }
 
   const missingEntries = requiredEntries.filter((entry) => !entries.includes(entry));
@@ -92,8 +74,7 @@ if (require.main === module) {
 }
 
 module.exports = {
-  forbiddenEntries,
-  forbiddenPrefixes,
+  allowedEntries,
   inspectEntries,
   inspectVsix,
   readZipEntries,
