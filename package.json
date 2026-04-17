@@ -23,6 +23,32 @@
       "supported": true
     }
   },
+  "contributes": {
+    "commands": [
+      {
+        "command": "fileReference.copyAbsoluteReference",
+        "title": "File Reference: Copy Absolute Reference"
+      },
+      {
+        "command": "fileReference.copyRelativeReference",
+        "title": "File Reference: Copy Relative Reference"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "fileReference.copyAbsoluteReference",
+        "key": "ctrl+alt+shift+c",
+        "mac": "cmd+alt+shift+c",
+        "when": "editorTextFocus && !editorReadonly && resourceScheme == file"
+      },
+      {
+        "command": "fileReference.copyRelativeReference",
+        "key": "ctrl+alt+shift+r",
+        "mac": "cmd+alt+shift+r",
+        "when": "editorTextFocus && !editorReadonly && resourceScheme == file"
+      }
+    ]
+  },
   "scripts": {
     "build": "node esbuild.js",
     "typecheck": "tsc --noEmit",
