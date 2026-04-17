@@ -61,11 +61,21 @@ function parseReadmeDocs(readme: string): ReadmeDocs {
   const commands = commandsSection
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => line.startsWith('- '))
-    .map((line) => {
-      const match = line.match(/`([^`]+)`/);
-      assert.ok(match, `README Commands section contains an unparseable command line: ${line}`);
-      return match[1];
+    .filter((line) => line.startsWith('- ') || line.startsWith('|'))
+    .flatMap((line) => {
+      if (line.startsWith('- ')) {
+        const match = line.match(/`([^`]+)`/);
+        assert.ok(match, `README Commands section contains an unparseable command line: ${line}`);
+        return [match[1]];
+      }
+
+      if (/^\|\s*---/.test(line) || /^\|\s*Command ID\s*\|/.test(line)) {
+        return [];
+      }
+
+      const cells = line.split('|').slice(1, -1).map((cell) => cell.trim().replace(/^`|`$/g, ''));
+      assert.equal(cells.length, 2, `README Commands section contains an unexpected table row: ${line}`);
+      return [cells[1]];
     });
 
   const shortcutRows = shortcutsSection

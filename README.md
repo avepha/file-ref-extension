@@ -12,8 +12,10 @@ File Reference copies a deterministic plain-text reference for the active saved 
 
 ## Commands
 
-- `File Reference: Copy Absolute Path with Line`
-- `File Reference: Copy Relative Path with Line`
+| Command ID | Command Palette title |
+| --- | --- |
+| `fileReference.copyAbsoluteReference` | `File Reference: Copy Absolute Path with Line` |
+| `fileReference.copyRelativeReference` | `File Reference: Copy Relative Path with Line` |
 
 ## Default shortcuts
 
@@ -21,6 +23,8 @@ File Reference copies a deterministic plain-text reference for the active saved 
 | --- | --- | --- |
 | macOS | `Alt+Shift+C` | `Alt+C` |
 | Windows / Linux | `Ctrl+Alt+Shift+C` | `Ctrl+Alt+C` |
+
+These defaults match the shipped `package.json` manifest contributions.
 
 ## Supported editor state
 
