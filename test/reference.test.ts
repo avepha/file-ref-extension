@@ -75,6 +75,19 @@ describe('buildFileReference', () => {
     assert.equal(result.ok, true);
     if (result.ok) {
       assert.equal(result.value, 'src/main.ts:12-15');
+      assert.equal(result.effectiveMode, 'relative');
+    }
+  });
+
+  it('reports absolute output when relative mode falls back outside the workspace', () => {
+    const result = buildFileReference(createEditor(), 'relative', [
+      { uri: { fsPath: '/workspace/other' } },
+    ]);
+
+    assert.equal(result.ok, true);
+    if (result.ok) {
+      assert.equal(result.value, '/workspace/app/src/main.ts:12-15');
+      assert.equal(result.effectiveMode, 'absolute');
     }
   });
 

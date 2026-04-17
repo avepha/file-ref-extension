@@ -5,8 +5,14 @@ import type {
   WorkspaceFolderLike,
 } from './contracts';
 import { validateEditorInput } from './guards';
-import { resolveReferencePath } from './path';
+import { normalizeToPosixPath, resolveReferencePath } from './path';
 import { formatNormalizedLine, normalizeSelectionLines } from './range';
+
+export interface FileReferenceSuccessResult {
+  ok: true;
+  value: string;
+  effectiveMode: ReferenceMode;
+}
 
 export function formatFileReference(
   documentPath: string,
@@ -24,20 +30,23 @@ export function buildFileReference(
   editor: EditorLike | null | undefined,
   mode: ReferenceMode,
   workspaceFolders: readonly WorkspaceFolderLike[] = [],
-): { ok: true; value: string } | { ok: false; error: UnsupportedEditorState } {
+): FileReferenceSuccessResult | { ok: false; error: UnsupportedEditorState } {
   const validation = validateEditorInput(editor);
 
   if (!validation.ok) {
     return validation;
   }
 
+  const pathOutput = resolveReferencePath(validation.value.documentPath, mode, workspaceFolders);
+  const lineOutput = formatNormalizedLine(normalizeSelectionLines(validation.value.selection));
+  const effectiveMode =
+    mode === 'relative' && pathOutput === normalizeToPosixPath(validation.value.documentPath)
+      ? 'absolute'
+      : mode;
+
   return {
     ok: true,
-    value: formatFileReference(
-      validation.value.documentPath,
-      validation.value.selection,
-      mode,
-      workspaceFolders,
-    ),
+    value: `${pathOutput}:${lineOutput}`,
+    effectiveMode,
   };
 }

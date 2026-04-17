@@ -1,7 +1,7 @@
 import type * as vscode from 'vscode';
 
 import type { EditorLike, ReferenceMode, WorkspaceFolderLike } from './contracts';
-import { buildFileReference } from './reference';
+import { buildFileReference, type FileReferenceSuccessResult } from './reference';
 
 interface ClipboardWriteFailedError {
   reason: 'clipboard-write-failed';
@@ -35,7 +35,7 @@ function successMessageFor(mode: ReferenceMode): string {
   return mode === 'absolute' ? ABSOLUTE_SUCCESS_MESSAGE : RELATIVE_SUCCESS_MESSAGE;
 }
 
-function isSuccessfulResult(result: CommandExecutionResult): result is { ok: true; value: string } {
+function isSuccessfulResult(result: CommandExecutionResult): result is FileReferenceSuccessResult {
   return result.ok;
 }
 
@@ -130,7 +130,7 @@ export async function executeCopyReferenceCommand(
     };
   }
 
-  void environment.notifications?.showInformationMessage(successMessageFor(mode));
+  void environment.notifications?.showInformationMessage(successMessageFor(result.effectiveMode));
 
   return result;
 }

@@ -122,6 +122,41 @@ describe('executeCopyReferenceCommand', () => {
     assert.deepEqual(infoMessages, [RELATIVE_SUCCESS_MESSAGE]);
   });
 
+  it('shows the absolute success message when relative mode falls back outside the workspace', async () => {
+    const clipboardWrites: string[] = [];
+    const infoMessages: string[] = [];
+
+    const result = await executeCopyReferenceCommand(
+      {
+        activeEditor: createEditor(),
+        clipboard: {
+          async writeText(value: string): Promise<void> {
+            clipboardWrites.push(value);
+          },
+        },
+        notifications: {
+          showErrorMessage(message: string): string {
+            throw new Error(`unexpected error message: ${message}`);
+          },
+          showInformationMessage(message: string): string {
+            infoMessages.push(message);
+            return message;
+          },
+        },
+        workspaceFolders: [{ uri: { fsPath: '/workspace/other' } }],
+      },
+      'relative',
+    );
+
+    assert.equal(result.ok, true);
+    if (result.ok) {
+      assert.equal(result.value, '/workspace/app/src/feature.ts:8');
+      assert.equal(result.effectiveMode, 'absolute');
+    }
+    assert.deepEqual(clipboardWrites, ['/workspace/app/src/feature.ts:8']);
+    assert.deepEqual(infoMessages, [ABSOLUTE_SUCCESS_MESSAGE]);
+  });
+
   it('propagates validation failures from the shared guard flow', async () => {
     const clipboardWrites: string[] = [];
     const errorMessages: string[] = [];
