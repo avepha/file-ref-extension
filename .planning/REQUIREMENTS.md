@@ -20,15 +20,15 @@
 
 ### Access
 
-- [ ] **ACC-01**: User can run the absolute and relative copy commands from the Command Palette.
-- [ ] **ACC-02**: User can trigger the absolute and relative copy commands with the default macOS shortcuts.
-- [ ] **ACC-03**: User can trigger the absolute and relative copy commands with the default Windows and Linux shortcuts.
+- [x] **ACC-01**: User can run the absolute and relative copy commands from the Command Palette.
+- [x] **ACC-02**: User can trigger the absolute and relative copy commands with the default macOS shortcuts.
+- [x] **ACC-03**: User can trigger the absolute and relative copy commands with the default Windows and Linux shortcuts.
 
 ### Clipboard and Feedback
 
-- [ ] **CLIP-01**: User gets the final file reference copied directly to the clipboard with no confirmation step.
-- [ ] **CLIP-02**: User sees a concise success notification after a successful copy.
-- [ ] **CLIP-03**: User sees a clear failure notification when a copy command cannot run.
+- [x] **CLIP-01**: User gets the final file reference copied directly to the clipboard with no confirmation step.
+- [x] **CLIP-02**: User sees a concise success notification after a successful copy.
+- [x] **CLIP-03**: User sees a clear failure notification when a copy command cannot run.
 
 ### Release Quality
 
@@ -73,12 +73,12 @@
 | REF-03 | Phase 1 | Complete |
 | REF-04 | Phase 1 | Complete |
 | REF-05 | Phase 1 | Complete |
-| ACC-01 | Phase 2 | Pending |
-| ACC-02 | Phase 2 | Pending |
-| ACC-03 | Phase 2 | Pending |
-| CLIP-01 | Phase 2 | Pending |
-| CLIP-02 | Phase 2 | Pending |
-| CLIP-03 | Phase 2 | Pending |
+| ACC-01 | Phase 2 | Complete |
+| ACC-02 | Phase 2 | Complete |
+| ACC-03 | Phase 2 | Complete |
+| CLIP-01 | Phase 2 | Complete |
+| CLIP-02 | Phase 2 | Complete |
+| CLIP-03 | Phase 2 | Complete |
 | REL-01 | Phase 3 | Pending |
 | REL-02 | Phase 3 | Pending |
 

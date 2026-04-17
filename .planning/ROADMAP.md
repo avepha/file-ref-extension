@@ -67,6 +67,32 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. User sees a concise success notification after a successful copy and a clear failure notification when the command cannot run.
 **Plans**: 2 plans
 
+#### Plan 2.1: Commands, Contributions, and Editor Adapters
+**Outcome**: The extension contributes both copy commands, wires them through activation, and adapts VS Code editor/workspace state into the Phase 1 formatter through one shared command path.
+**Covers**: ACC-01, ACC-02, ACC-03
+**Key work**:
+- Add command and keybinding contributions to `package.json` with editor-focused `when` clauses.
+- Implement one shared command-use-case path that reads the active editor and workspace folders and requests absolute or relative output from the existing reference engine.
+- Register both commands in `src/extension.ts` with minimal mode-specific branching.
+- Add tests for command routing, editor/workspace adaptation, and manifest-level contribution assumptions.
+**Exit checks**:
+- Both commands are discoverable from the Command Palette.
+- Default shortcuts are declared for macOS, Windows, and Linux.
+- Command handlers do not duplicate formatting logic already locked in Phase 1.
+
+#### Plan 2.2: Clipboard Write and User Feedback Flow
+**Outcome**: Successful commands copy the exact final reference to the clipboard and show concise success or failure feedback with no extra confirmation step.
+**Covers**: CLIP-01, CLIP-02, CLIP-03
+**Key work**:
+- Write successful outputs through `vscode.env.clipboard.writeText()`.
+- Show concise absolute/relative success notifications after copy completes.
+- Surface unsupported editor failures with the clear existing error message.
+- Add tests for clipboard writes, notification selection, and no-copy behavior on invalid input.
+**Exit checks**:
+- Success copies exactly the final formatted string.
+- Failures never copy partial output.
+- User feedback stays minimal while still satisfying the product requirement.
+
 ### Phase 3: Release Readiness
 **Goal**: Maintainers can publish the extension confidently, and users get the same core behavior across supported desktop platforms.
 **Depends on**: Phase 2
@@ -84,6 +110,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Reference Engine | 0/2 | Not started | - |
+| 1. Reference Engine | 2/2 | Complete | 2026-04-17 |
 | 2. Command Workflow | 0/2 | Not started | - |
 | 3. Release Readiness | 0/1 | Not started | - |
