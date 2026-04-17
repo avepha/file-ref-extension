@@ -1,6 +1,6 @@
 ---
 phase: 03-release-readiness
-reviewed: 2026-04-17T00:00:00Z
+reviewed: 2026-04-17T04:59:37Z
 depth: deep
 files_reviewed: 11
 files_reviewed_list:
@@ -17,75 +17,69 @@ files_reviewed_list:
   - test/release-assets.test.ts
 critical: 0
 warning: 2
-info: 0
-total: 2
+info: 1
+total: 3
 findings:
   critical: 0
   warning: 2
-  info: 0
-  total: 2
+  info: 1
+  total: 3
 status: issues_found
 ---
 
 # Phase 03: Code Review Report
 
-**Reviewed:** 2026-04-17T00:00:00Z
+**Reviewed:** 2026-04-17T04:59:37Z
 **Depth:** deep
 **Files Reviewed:** 11
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the release-readiness changes across packaging metadata, release docs, CI, and validation tests. The release surface is close to publishable, but the current checks still allow two important failure modes: CI can produce a VSIX without running archive hygiene validation, and the local VSIX inspection/tests do not prove that required runtime/release assets are actually present in the packaged artifact.
+Reviewed the release-readiness files across CI, packaging checks, metadata, docs, and release tests. I also executed `npm run release:check`; build, typecheck, tests, and VSIX packaging passed, but `npm run package:inspect` failed against the real `.vsix`. The main risk is that the current inspection/tests encode the wrong packaged filenames, so release validation is currently broken despite the unit tests passing.
 
 ## Warnings
 
-### WR-01: CI packaging job skips VSIX hygiene inspection
+### WR-01: Real VSIX inspection is broken by incorrect expected entry names
 
-**File:** `.github/workflows/release-validation.yml:29-39`
-**Issue:** The dedicated packaging job only runs `npm run package`. That means pull requests can pass release validation even when the generated VSIX still contains forbidden dev-only files, because `scripts/inspect-vsix.js` is never executed in CI. The release checklist and `release:check` script expect this validation, but the workflow does not enforce it.
-**Fix:** Run the full release check or at minimum add the inspection step after packaging.
-
-```yaml
-package:
-  name: Package VSIX
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 24
-        cache: npm
-    - run: npm ci
-    - run: npm run package
-    - run: npm run package:inspect
-```
-
-### WR-02: VSIX validation only checks for forbidden files, not required packaged assets
-
-**File:** `scripts/inspect-vsix.js:39-63`, `test/release-assets.test.ts:11-19`
-**Issue:** The inspector rejects known-bad paths, and the test only checks that release files exist in the repository. Neither verifies that the packaged VSIX actually contains the files required for a publishable extension, such as `extension/package.json`, `extension/dist/extension.js`, `extension/README.md`, `extension/CHANGELOG.md`, `extension/LICENSE`, and `extension/media/icon.png`. A broken `.vscodeignore`, packaging config change, or bundling failure could therefore ship an incomplete VSIX while both checks still pass.
-**Fix:** Extend the inspector to assert required entries and add a test that exercises that stricter contract.
+**File:** `scripts/inspect-vsix.js:4-11`, `scripts/inspect-vsix.js:67-70`, `test/release-assets.test.ts:29-40`
+**Issue:** `requiredEntries` expects `extension/README.md`, `extension/CHANGELOG.md`, and `extension/LICENSE`, but `vsce package` emits `extension/readme.md`, `extension/changelog.md`, and `extension/LICENSE.txt`. As a result, `npm run package:inspect` fails on the actual archive, which also makes `npm run release:check` fail and blocks release validation. The accompanying test only feeds `inspectEntries([...requiredEntries])`, so it gives false confidence and never exercises the real packaged names.
+**Fix:** Align the required entries with actual `vsce` output, or normalize entry names before comparison, and add a test that inspects a real packaged VSIX (or a fixture that matches `vsce` naming).
 
 ```js
 const requiredEntries = [
   'extension/package.json',
   'extension/dist/extension.js',
-  'extension/README.md',
-  'extension/CHANGELOG.md',
-  'extension/LICENSE',
+  'extension/readme.md',
+  'extension/changelog.md',
+  'extension/LICENSE.txt',
   'extension/media/icon.png',
 ];
-
-const missingEntries = requiredEntries.filter((entry) => !entries.includes(entry));
-
-if (missingEntries.length > 0) {
-  throw new Error(`VSIX is missing required files:\n${missingEntries.join('\n')}`);
-}
 ```
+
+### WR-02: Published shortcut documentation does not match the manifest
+
+**File:** `README.md:18-23`, `package.json:55-67`
+**Issue:** The README advertises `Cmd+Option+K` / `Cmd+Option+Shift+K` on macOS and `Ctrl+Alt+K` / `Ctrl+Alt+Shift+K` on Windows/Linux, but the manifest actually contributes `Alt+Shift+C` and `Alt+C` variants. Shipping the current README would publish incorrect usage instructions and make the extension look broken to users even if the commands work.
+**Fix:** Update the README table to match `package.json`, or change the manifest to match the documented shortcuts and keep both in sync with a test.
+
+```md
+| Platform | Absolute | Relative |
+| --- | --- | --- |
+| macOS | `Alt+Shift+C` | `Alt+C` |
+| Windows / Linux | `Ctrl+Alt+Shift+C` | `Ctrl+Alt+C` |
+```
+
+## Info
+
+### IN-01: VSIX hygiene rules do not account for shipped source maps
+
+**File:** `.vscodeignore:1-15`, `scripts/inspect-vsix.js:13-29`
+**Issue:** The packaged archive currently includes `extension/dist/extension.js.map`, but neither `.vscodeignore` nor the inspection script treats source maps as intentionally allowed or explicitly forbidden. That makes the package contents drift from the stated goal of shipping only the bundled runtime and release assets.
+**Fix:** Decide whether source maps are part of the public artifact. If not, exclude `dist/**/*.map` from the VSIX or disable production sourcemaps; if yes, add an explicit allowlist/assertion so the packaging policy is clear.
 
 ---
 
-_Reviewed: 2026-04-17T00:00:00Z_
+_Reviewed: 2026-04-17T04:59:37Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
