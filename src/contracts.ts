@@ -27,6 +27,12 @@ export interface SupportedEditorInput {
   selection: SelectionLike;
 }
 
+export interface WorkspaceFolderLike {
+  uri: {
+    fsPath: string;
+  };
+}
+
 export type UnsupportedEditorReason =
   | 'no-active-editor'
   | 'diff-editor'
@@ -45,3 +51,5 @@ export type ValidationResult =
 export type NormalizedLineOutput =
   | { kind: 'line'; line: number }
   | { kind: 'range'; startLine: number; endLine: number };
+
+export type ReferenceMode = 'absolute' | 'relative';
