@@ -161,11 +161,15 @@ function assertReadmeMatchesManifest(readme: string, manifest: ManifestShape): v
 
 describe('release assets', () => {
   const packagedRuntimeEntries = [
+    '[Content_Types].xml',
+    'extension.vsixmanifest',
     'extension/package.json',
     'extension/dist/extension.js',
+    'extension/dist/extension.js.map',
     'extension/readme.md',
     'extension/changelog.md',
     'extension/LICENSE.txt',
+    'extension/docs/release-checklist.md',
     'extension/media/icon.png',
   ];
   const readme = readFileSync(rootPath('README.md'), 'utf8');

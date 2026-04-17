@@ -2,3 +2,28 @@ node_modules/
 .build/
 dist/
 *.vsix
+
+# Local OS metadata
+.DS_Store
+
+# Local environment files
+.env
+.env.*
+
+# Local logs
+*.log
+
+# Internal planning runtime/debug state
+.planning/config.json
+.planning/STATE.md
+.planning/debug/
+
+# Internal planning execution artifacts
+.planning/phases/*/*-CONTEXT.md
+.planning/phases/*/*-*-PLAN.md
+.planning/phases/*/*-DISCUSSION-LOG.md
+.planning/phases/*/*-REVIEW.md
+.planning/phases/*/*-REVIEW-FIX.md
+.planning/phases/*/*-UAT.md
+.planning/phases/*/*-HUMAN-UAT.md
+.planning/phases/*/*-VERIFICATION.md

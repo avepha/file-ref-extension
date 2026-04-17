@@ -2,11 +2,15 @@ const { existsSync, readFileSync } = require('node:fs');
 const path = require('node:path');
 
 const allowedEntries = [
+  '[Content_Types].xml',
+  'extension.vsixmanifest',
   'extension/package.json',
   'extension/dist/extension.js',
+  'extension/dist/extension.js.map',
   'extension/readme.md',
   'extension/changelog.md',
   'extension/LICENSE.txt',
+  'extension/docs/release-checklist.md',
   'extension/media/icon.png',
 ];
 
