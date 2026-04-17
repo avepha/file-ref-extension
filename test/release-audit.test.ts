@@ -23,14 +23,31 @@ describe('release audit gate', () => {
   it('requires release validation workflow to run the audit gate before packaging', () => {
     const workflow = readFileSync(rootPath('.github', 'workflows', 'release-validation.yml'), 'utf8');
 
-    assert.match(workflow, /- run: npm run audit:check/);
+    const lines = workflow.split('\n');
+    const packageStart = lines.indexOf('  package:');
 
-    const auditIndex = workflow.indexOf('- run: npm run audit:check');
-    const packageIndex = workflow.indexOf('- run: npm run package');
+    const packageJobLines: string[] = [];
 
-    assert.notEqual(auditIndex, -1, 'Workflow should include npm run audit:check');
-    assert.notEqual(packageIndex, -1, 'Workflow should include npm run package');
-    assert.ok(auditIndex < packageIndex, 'Workflow should run npm audit before packaging the VSIX');
+    if (packageStart !== -1) {
+      for (const line of lines.slice(packageStart + 1)) {
+        if (line !== '' && !line.startsWith('    ')) {
+          break;
+        }
+
+        packageJobLines.push(line);
+      }
+    }
+
+    const packageJob = packageJobLines.join('\n');
+
+    assert.notEqual(packageJob, '', 'Workflow should define a package job');
+
+    const auditIndex = packageJob.indexOf('- run: npm run audit:check');
+    const packageIndex = packageJob.indexOf('- run: npm run package');
+
+    assert.notEqual(auditIndex, -1, 'Package job should include npm run audit:check');
+    assert.notEqual(packageIndex, -1, 'Package job should include npm run package');
+    assert.ok(auditIndex < packageIndex, 'Package job should run npm audit before packaging');
   });
 
   it('documents audit review in the maintainer release checklist', () => {
