@@ -26,6 +26,11 @@ type KeybindingContribution = {
   mac?: string;
 };
 
+type ReadmeCommandRow = {
+  id: string;
+  title: string;
+};
+
 type ManifestShape = {
   contributes: {
     commands: CommandContribution[];
@@ -34,7 +39,7 @@ type ManifestShape = {
 };
 
 type ReadmeDocs = {
-  commands: string[];
+  commands: ReadmeCommandRow[];
   shortcuts: {
     macos: { absolute: string; relative: string };
     windowsLinux: { absolute: string; relative: string };
@@ -64,9 +69,9 @@ function parseReadmeDocs(readme: string): ReadmeDocs {
     .filter((line) => line.startsWith('- ') || line.startsWith('|'))
     .flatMap((line) => {
       if (line.startsWith('- ')) {
-        const match = line.match(/`([^`]+)`/);
+        const match = line.match(/`([^`]+)`\s*[-–—:]\s*(.+)$/);
         assert.ok(match, `README Commands section contains an unparseable command line: ${line}`);
-        return [match[1]];
+        return [{ id: match[1], title: match[2].trim() }];
       }
 
       if (/^\|\s*---/.test(line) || /^\|\s*Command ID\s*\|/.test(line)) {
@@ -75,7 +80,7 @@ function parseReadmeDocs(readme: string): ReadmeDocs {
 
       const cells = line.split('|').slice(1, -1).map((cell) => cell.trim().replace(/^`|`$/g, ''));
       assert.equal(cells.length, 2, `README Commands section contains an unexpected table row: ${line}`);
-      return [cells[1]];
+      return [{ id: cells[0], title: cells[1] }];
     });
 
   const shortcutRows = shortcutsSection
@@ -108,7 +113,10 @@ function parseReadmeDocs(readme: string): ReadmeDocs {
 }
 
 function getExpectedReadmeDocs(manifest: ManifestShape): ReadmeDocs {
-  const commandTitles = manifest.contributes.commands.map((command) => command.title);
+  const commands = manifest.contributes.commands.map(({ command, title }) => ({
+    id: command,
+    title,
+  }));
   const keybindingByCommand = new Map(manifest.contributes.keybindings.map((binding) => [binding.command, binding]));
 
   const absoluteBinding = keybindingByCommand.get('fileReference.copyAbsoluteReference');
@@ -118,7 +126,7 @@ function getExpectedReadmeDocs(manifest: ManifestShape): ReadmeDocs {
   assert.ok(relativeBinding, 'Manifest missing relative reference keybinding');
 
   return {
-    commands: commandTitles,
+    commands,
     shortcuts: {
       macos: {
         absolute: normalizeShortcut(absoluteBinding.mac ?? ''),
@@ -183,6 +191,15 @@ describe('release assets', () => {
     assert.throws(
       () => assertReadmeMatchesManifest(driftedReadme, manifest),
       /README Default shortcuts section drifted from package\.json/,
+    );
+  });
+
+  it('fails with a section-specific message when README command IDs drift from the manifest', () => {
+    const driftedReadme = readme.replace('`fileReference.copyAbsoluteReference`', '`fileReference.copyAbsoulteReference`');
+
+    assert.throws(
+      () => assertReadmeMatchesManifest(driftedReadme, manifest),
+      /README Commands section drifted from package\.json/,
     );
   });
 
