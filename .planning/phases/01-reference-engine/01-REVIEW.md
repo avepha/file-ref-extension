@@ -1,6 +1,6 @@
 ---
 phase: 01-reference-engine
-reviewed: 2026-04-17T05:00:23Z
+reviewed: 2026-04-17T05:19:03Z
 depth: deep
 files_reviewed: 12
 files_reviewed_list:
@@ -18,58 +18,68 @@ files_reviewed_list:
   - test/reference.test.ts
 findings:
   critical: 0
-  warning: 1
-  info: 1
+  warning: 2
+  info: 0
   total: 2
 status: issues_found
 ---
 
 # Phase 01: Code Review Report
 
-**Reviewed:** 2026-04-17T05:00:23Z
+**Reviewed:** 2026-04-17T05:19:03Z
 **Depth:** deep
 **Files Reviewed:** 12
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the reference engine across manifest/config, validation, range normalization, path resolution, and scoped tests. `npm test` and `npm run typecheck` both pass. The main remaining functional risk is Windows UNC path handling in relative mode.
+Reviewed the reference engine end to end across manifest/config, editor guards, range normalization, path resolution, reference formatting, and the scoped unit tests. The core path/range logic is small and readable, but two cross-file reliability gaps remain: the test build can execute stale compiled tests, and the local test/runtime configuration is looser than the published extension target, which can hide extension-host regressions.
 
 ## Warnings
 
-### WR-01: Relative path resolution breaks for Windows UNC workspaces
+### WR-01: Test runs can pick up stale compiled files from previous builds
 
-**File:** `src/path.ts:9-16,36-41,55-64`
-**Issue:** `isWindowsPath()` only recognizes drive-letter paths like `C:\...`. UNC paths such as `\\server\share\repo\file.ts` fall through to the POSIX branch in `relativeFromContainingFolder()`, which runs `path.posix.relative()` on backslash-delimited Windows paths. That produces malformed references like `..///server/share/...` instead of `src/file.ts`. The same drive-letter-only check also skips Windows-style case folding for UNC paths, so mixed-case UNC workspace/document pairs can fail containment checks.
-**Fix:** Treat UNC paths as Windows paths and normalize separators before computing the relative path.
+**File:** `package.json:74-75`
+**Issue:** `npm test` compiles into `.build` and immediately runs `mocha ".build/test/**/*.test.js"`, but the script never clears `.build` first. TypeScript does not remove deleted or renamed outputs, so old compiled test files can continue to run after the source file is gone. That creates flaky review signals and can fail releases for tests that no longer exist in the repository.
+**Fix:** Clean the output directory before compiling tests.
 
-```ts
-function isWindowsPath(value: string): boolean {
-  return /^[A-Za-z]:[\\/]/.test(value) || value.startsWith('\\\\');
-}
-
-function relativeFromContainingFolder(folderPath: string, documentPath: string): string {
-  const normalizedFolder = normalizeToPosixPath(folderPath);
-  const normalizedDocument = normalizeToPosixPath(documentPath);
-
-  if (isWindowsPath(folderPath) || isWindowsPath(documentPath)) {
-    return normalizeToPosixPath(path.win32.relative(folderPath, documentPath));
+```json
+{
+  "scripts": {
+    "clean:build": "rm -rf .build",
+    "compile-tests": "npm run clean:build && tsc --outDir .build",
+    "test": "npm run compile-tests && mocha \".build/test/**/*.test.js\""
   }
-
-  return path.posix.relative(normalizedFolder, normalizedDocument);
 }
 ```
 
-## Info
+### WR-02: Test/runtime targets are misaligned with the published extension host
 
-### IN-01: Path tests miss UNC regression coverage
+**File:** `tsconfig.json:3-6`, `esbuild.js:12`, `package.json:72-76`
+**Issue:** The published bundle is explicitly compiled for `node20` in `esbuild.js`, but the TypeScript config and local test flow compile sources directly with `target: "ES2024"` and run them under the developer's local Node runtime. In practice, code can pass `npm test` and `npm run typecheck` while still using syntax or Node APIs that are available locally but not in the VS Code extension host. This is a cross-file regression risk, especially because these tests do not execute inside VS Code.
+**Fix:** Align the checked/tested runtime with the shipped runtime. Either lower the TS target/lib to the extension-host baseline or add extension-host tests that run the code under VS Code's Node environment.
 
-**File:** `test/path.test.ts:73-96`
-**Issue:** The path suite covers drive-letter Windows paths but not UNC shares. That leaves the broken `\\server\share\...` case unguarded, so this cross-platform regression can slip through despite the current tests passing.
-**Fix:** Add tests for absolute and relative UNC paths, including mixed-case workspace/document pairs.
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"]
+  }
+}
+```
+
+```json
+// package.json
+{
+  "scripts": {
+    "test": "npm run compile-tests && vscode-test"
+  }
+}
+```
 
 ---
 
-_Reviewed: 2026-04-17T05:00:23Z_
+_Reviewed: 2026-04-17T05:19:03Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
