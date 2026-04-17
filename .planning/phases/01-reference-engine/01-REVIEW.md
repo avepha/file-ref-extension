@@ -1,6 +1,6 @@
 ---
 phase: 01-reference-engine
-reviewed: 2026-04-17T04:30:34Z
+reviewed: 2026-04-17T04:40:09Z
 depth: deep
 files_reviewed: 12
 files_reviewed_list:
@@ -26,22 +26,22 @@ status: issues_found
 
 # Phase 01: Code Review Report
 
-**Reviewed:** 2026-04-17T04:30:34Z
+**Reviewed:** 2026-04-17T04:40:09Z
 **Depth:** deep
 **Files Reviewed:** 12
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the reference-formatting pipeline end to end: editor validation in `src/guards.ts`, line normalization in `src/range.ts`, path resolution in `src/path.ts`, and the package/build wiring that exposes the commands. The main risks are path-resolution edge cases in relative mode and configuration choices that can block valid usage or break compatibility on supported VS Code versions.
+Reviewed the reference engine end to end across validation, line normalization, path resolution, manifest wiring, and scoped tests. `npm test` and `npm run typecheck` both pass, but there are still four behavior/configuration issues that can produce incorrect relative paths or block supported usage.
 
 ## Warnings
 
 ### WR-01: Relative mode picks the first matching workspace instead of the closest one
 
 **File:** `src/path.ts:51-60`
-**Issue:** `resolveReferencePath()` uses `workspaceFolders.find(...)`, so in nested multi-root workspaces it picks the first containing folder rather than the deepest containing folder. For a file like `/repo/packages/app/src/main.ts` with workspace folders `/repo` and `/repo/packages/app`, the current code returns `packages/app/src/main.ts` instead of the expected `src/main.ts`.
-**Fix:** Choose the longest matching workspace path before calling `path.relative()`.
+**Issue:** `resolveReferencePath()` uses `workspaceFolders.find(...)`, so nested multi-root workspaces resolve against whichever containing folder appears first. If both `/repo` and `/repo/packages/app` are open, a file inside `app` is rendered as `packages/app/...` instead of `src/...`, which is the wrong project-local reference.
+**Fix:** Prefer the deepest containing workspace folder before computing the relative path.
 
 ```ts
 const containingFolder = workspaceFolders
@@ -49,11 +49,11 @@ const containingFolder = workspaceFolders
   .sort((left, right) => right.uri.fsPath.length - left.uri.fsPath.length)[0];
 ```
 
-### WR-02: POSIX root workspaces never count as containing folders
+### WR-02: POSIX root workspaces never resolve to relative paths
 
 **File:** `src/path.ts:5-7,22-29`
-**Issue:** `trimTrailingSlash('/')` preserves `/`, then `isContainingFolder()` checks `normalizedDocument.startsWith(`${normalizedFolder}/`)`, which becomes `startsWith('//')`. If a user opens `/` as the workspace root, every file incorrectly falls back to an absolute reference instead of a relative one.
-**Fix:** Special-case the POSIX root when checking containment.
+**Issue:** When the workspace folder is `/`, `isContainingFolder()` checks `normalizedDocument.startsWith('//')`, which is always false for normal POSIX paths. Opening the filesystem root as a workspace therefore forces absolute output even in relative mode.
+**Fix:** Special-case the POSIX root when checking folder containment.
 
 ```ts
 function isContainingFolder(folderPath: string, documentPath: string): boolean {
@@ -71,29 +71,28 @@ function isContainingFolder(folderPath: string, documentPath: string): boolean {
 }
 ```
 
-### WR-03: Keybindings are disabled for read-only files even though the feature is safe there
+### WR-03: Read-only saved files lose the advertised one-keystroke workflow
 
 **File:** `package.json:60,66`
-**Issue:** Both keybindings require `!editorReadonly`. Copying a file reference does not modify the document, so this unnecessarily disables the extension's primary one-keypress workflow for valid saved local files opened in read-only mode.
-**Fix:** Remove the read-only restriction from the `when` clauses.
+**Issue:** Both keybindings require `!editorReadonly`, but copying a file reference is read-only behavior. This blocks the extension's primary shortcut for valid saved local files opened in read-only mode, which is stricter than the product constraint.
+**Fix:** Remove the read-only guard from the keybinding `when` clauses.
 
 ```json
 "when": "editorTextFocus && !isInDiffEditor && resourceScheme == file"
 ```
 
-### WR-04: esbuild targets Node 24 instead of the extension host runtime
+### WR-04: The production bundle targets a newer Node runtime than the declared VS Code support range
 
 **File:** `esbuild.js:12`
-**Issue:** The bundle target is `node24`, but `engines.vscode: ^1.100.0` allows VS Code versions whose extension host may run an older Node release. esbuild can emit syntax/features unavailable in those hosts, causing runtime failures on otherwise supported VS Code versions.
-**Fix:** Target the minimum Node version guaranteed by the supported VS Code range, or use a conservative ECMAScript target.
+**Issue:** The bundle target is `node24`, but the extension runs inside VS Code's extension host, not the developer's local Node installation. With `engines.vscode: ^1.100.0`, this can emit syntax/features newer than the minimum supported host runtime and cause avoidable runtime incompatibilities.
+**Fix:** Target the minimum Node version guaranteed by the supported VS Code range, or use a conservative ECMAScript target aligned with that runtime.
 
 ```js
 target: 'node20',
-// or a similarly conservative target aligned with the minimum supported VS Code host
 ```
 
 ---
 
-_Reviewed: 2026-04-17T04:30:34Z_
+_Reviewed: 2026-04-17T04:40:09Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: deep_
