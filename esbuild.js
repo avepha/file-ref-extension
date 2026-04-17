@@ -9,7 +9,7 @@ esbuild
     outfile: 'dist/extension.js',
     external: ['vscode'],
     sourcemap: true,
-    target: 'node24',
+    target: 'node20',
     logLevel: 'info',
   })
   .catch(() => process.exit(1));
