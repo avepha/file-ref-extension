@@ -9,6 +9,9 @@ Copy deterministic file paths with line numbers from the active VS Code editor i
 
 ## What it does
 
+<img width="1512" height="1112" alt="image" src="https://github.com/user-attachments/assets/206d9eee-2594-4832-90ba-b9b55b31f30d" />
+
+
 Copy File Path with Line Numbers (AI Prompt) is a focused utility for developers who need a paste-ready `path:line` or `path:start-end` reference without cleanup. It fits AI prompting especially well, but it is just as useful for code reviews, tickets, and debugging notes.
 
 It always produces POSIX-style slash paths with normalized `path:line` or `path:start-end` output for the active saved local file.
