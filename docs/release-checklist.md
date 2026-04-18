@@ -4,7 +4,7 @@
 
 1. Pull requests run `.github/workflows/release-validation.yml`.
 2. Pushes to `main` run `.github/workflows/release.yml`.
-3. `semantic-release` reads Conventional Commit messages on `main`, computes the next SemVer, updates `package.json`, `package-lock.json`, and `CHANGELOG.md`, tags the release, then runs `npm run release:publish`.
+3. `semantic-release` reads Conventional Commit messages on `main`, computes the next SemVer, creates the Git tag and GitHub release, and then runs `npm run release:publish`.
 4. `npm run release:publish` validates the repo, builds one versioned `.vsix`, and publishes that same artifact to both registries.
 
 ## Local validation
@@ -16,7 +16,7 @@
 
 ## GitHub repository setup
 
-1. Leave the default Actions `GITHUB_TOKEN` enabled with read/write `Contents`, `Issues`, and `Pull requests` permissions so semantic-release can create tags, GitHub releases, and release commits.
+1. Leave the default Actions `GITHUB_TOKEN` enabled with read/write `Contents` permissions so semantic-release can create tags and GitHub releases.
 2. Add `VSCE_PAT` as a repository secret with a VS Code Marketplace Personal Access Token.
 3. Add `OVSX_PAT` as a repository secret with an Open VSX access token.
 4. Make sure `package.json.repository.url` points at the real GitHub repository that will run the workflow.
