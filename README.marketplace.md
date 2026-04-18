@@ -2,11 +2,6 @@
 
 Copy deterministic AI-ready file references from the active VS Code editor in one keypress.
 
-## Install
-
-- Open VSX: [open-vsx.org/extension/avepha/file-reference](https://open-vsx.org/extension/avepha/file-reference)
-- VS Code Marketplace: [marketplace.visualstudio.com/items?itemName=avepha.file-reference](https://marketplace.visualstudio.com/items?itemName=avepha.file-reference) (currently returns `404` until the Marketplace listing is live)
-
 ## What it does
 
 VS Code can copy a file path, and some extensions can copy a path plus line numbers, but they often vary by platform, output style, or editor state. File Reference is intentionally narrow: it copies one predictable plain-text format for prompting AI tools.
@@ -38,7 +33,3 @@ These defaults match the shipped `package.json` manifest contributions.
 - Saved local text files
 
 This extension only supports saved local files. Unsupported states fail clearly with `No saved local text file is active` instead of copying something ambiguous.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for local development, release workflow, and commit conventions.

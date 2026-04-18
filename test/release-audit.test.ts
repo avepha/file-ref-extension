@@ -64,12 +64,12 @@ describe('release audit gate', () => {
   });
 
   it('documents semantic-release commit rules and required secrets', () => {
-    const readme = readFileSync(rootPath('README.md'), 'utf8');
+    const contributing = readFileSync(rootPath('CONTRIBUTING.md'), 'utf8');
     const checklist = readFileSync(rootPath('docs', 'release-checklist.md'), 'utf8');
 
-    assert.match(readme, /Conventional Commits/i);
-    assert.match(readme, /VSCE_PAT/);
-    assert.match(readme, /OVSX_PAT/);
+    assert.match(contributing, /Conventional Commits/i);
+    assert.match(contributing, /VSCE_PAT/);
+    assert.match(contributing, /OVSX_PAT/);
     assert.match(checklist, /GITHUB_TOKEN/);
     assert.match(checklist, /VSCE_PAT/);
     assert.match(checklist, /OVSX_PAT/);

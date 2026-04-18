@@ -1,3 +1,6 @@
+.codex
+.codex/**
+**/.codex/**
 .build/**
 .env
 .env.*
@@ -6,6 +9,9 @@
 .vscode/**
 .gitignore
 AGENTS.md
+CONTRIBUTING.md
+README.md
+README.marketplace.md
 learning/**
 PRODUCT_REQUIREMENTS.md
 scripts/**

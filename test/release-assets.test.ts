@@ -56,7 +56,16 @@ type ReadmeDocs = {
 };
 
 function normalizeShortcut(shortcut: string): string {
-  return shortcut.trim().replace(/\s+/g, ' ').toLowerCase();
+  return shortcut
+    .trim()
+    .replace(/⌘/g, 'cmd+')
+    .replace(/⌥/g, 'alt+')
+    .replace(/⇧/g, 'shift+')
+    .replace(/⌃/g, 'ctrl+')
+    .replace(/\s+/g, '')
+    .replace(/\++/g, '+')
+    .replace(/^\+|\+$/g, '')
+    .toLowerCase();
 }
 
 function getSection(readme: string, heading: string): string {
@@ -181,11 +190,21 @@ describe('release assets', () => {
     'extension/docs/release-checklist.md',
     'extension/media/icon.png',
   ];
-  const readme = readFileSync(rootPath('README.md'), 'utf8');
+  const githubReadme = readFileSync(rootPath('README.md'), 'utf8');
+  const marketplaceReadme = readFileSync(rootPath('README.marketplace.md'), 'utf8');
   const manifest = JSON.parse(readFileSync(rootPath('package.json'), 'utf8')) as ManifestShape;
 
   it('checks in the root files needed for public distribution', () => {
-    for (const relativePath of ['README.md', 'CHANGELOG.md', 'LICENSE', '.vscodeignore', 'docs/release-checklist.md', 'media/icon.png']) {
+    for (const relativePath of [
+      'README.md',
+      'README.marketplace.md',
+      'CONTRIBUTING.md',
+      'CHANGELOG.md',
+      'LICENSE',
+      '.vscodeignore',
+      'docs/release-checklist.md',
+      'media/icon.png',
+    ]) {
       assert.equal(existsSync(rootPath(relativePath)), true, `${relativePath} should exist`);
     }
   });
@@ -194,8 +213,16 @@ describe('release assets', () => {
     assert.equal(existsSync(rootPath('.github', 'workflows', 'release-validation.yml')), true);
   });
 
-  it('keeps README command titles and platform shortcuts aligned with the manifest', () => {
-    assert.doesNotThrow(() => assertReadmeMatchesManifest(readme, manifest));
+  it('keeps GitHub and marketplace README command titles and platform shortcuts aligned with the manifest', () => {
+    assert.doesNotThrow(() => assertReadmeMatchesManifest(githubReadme, manifest));
+    assert.doesNotThrow(() => assertReadmeMatchesManifest(marketplaceReadme, manifest));
+  });
+
+  it('keeps the marketplace README focused on extension usage only', () => {
+    assert.doesNotMatch(marketplaceReadme, /^## Install$/m);
+    assert.doesNotMatch(marketplaceReadme, /^## Development$/m);
+    assert.doesNotMatch(marketplaceReadme, /^## Release workflow$/m);
+    assert.doesNotMatch(marketplaceReadme, /^### Commit rules$/m);
   });
 
   it('contributes both reference commands to the editor context menu for file editors', () => {
@@ -217,7 +244,7 @@ describe('release assets', () => {
   });
 
   it('fails with a section-specific message when README shortcuts drift from the manifest', () => {
-    const driftedReadme = readme.replace('`Alt+C`', '`Cmd+Option+Shift+K`');
+    const driftedReadme = githubReadme.replace('`⌥C`', '`⌘⌥⇧K`');
 
     assert.throws(
       () => assertReadmeMatchesManifest(driftedReadme, manifest),
@@ -226,7 +253,7 @@ describe('release assets', () => {
   });
 
   it('fails with a section-specific message when README command IDs drift from the manifest', () => {
-    const driftedReadme = readme.replace('`fileReference.copyAbsoluteReference`', '`fileReference.copyAbsoulteReference`');
+    const driftedReadme = githubReadme.replace('`fileReference.copyAbsoluteReference`', '`fileReference.copyAbsoulteReference`');
 
     assert.throws(
       () => assertReadmeMatchesManifest(driftedReadme, manifest),
