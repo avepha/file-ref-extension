@@ -65,7 +65,21 @@
         "mac": "alt+c",
         "when": "editorTextFocus && !isInDiffEditor && resourceScheme == file"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "fileReference.copyAbsoluteReference",
+          "when": "editorTextFocus && !isInDiffEditor && resourceScheme == file",
+          "group": "navigation@100"
+        },
+        {
+          "command": "fileReference.copyRelativeReference",
+          "when": "editorTextFocus && !isInDiffEditor && resourceScheme == file",
+          "group": "navigation@101"
+        }
+      ]
+    }
   },
   "scripts": {
     "audit:check": "npm audit --audit-level=high",

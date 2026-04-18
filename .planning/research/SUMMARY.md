@@ -97,7 +97,7 @@ Based on research, suggested phase structure:
 **Addresses:** Recommended stack and packaging choices for public distribution.
 **Avoids:** Sloppy VSIX contents, metadata failures, late publish surprises.
 
-### Phase 4: Verification and Post-MVP Polish
+### Post-MVP Verification and Polish
 **Rationale:** The remaining risk is environment coverage, not feature breadth.
 **Delivers:** Extension-host integration tests, cross-platform path fixtures, single-root/multi-root/out-of-workspace validation, one remote clipboard/runtime sanity check, optional P2 polish only if core usage validates demand.
 **Addresses:** Relative-path semantics, packaging confidence, selective v1.x improvements like context menu entry or multi-root polish.
@@ -114,7 +114,7 @@ Based on research, suggested phase structure:
 
 Phases likely needing deeper research during planning:
 - **Phase 2:** confirm best default cross-platform shortcuts and decide how aggressive success notifications should be for high-frequency use.
-- **Phase 4:** validate at least one remote-development scenario and finalize exact test fixtures for multi-root and Windows path behavior.
+- Validate at least one remote-development scenario and finalize exact test fixtures for multi-root and Windows path behavior.
 - **Any v1.x alternate format phase:** if Claude-style syntax is added later, do targeted demand/API research first rather than inferring from competitor behavior.
 
 Phases with standard patterns (skip research-phase):

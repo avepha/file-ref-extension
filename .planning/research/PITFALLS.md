@@ -77,7 +77,7 @@ Developers naturally reach for Node path helpers or raw `fsPath`, which are corr
 - Users report copied paths work on macOS/Linux but look ugly or ambiguous on Windows.
 
 **Phase to address:**
-Phase 1 - Cross-platform formatting rules; Phase 4 - cross-platform verification.
+Phase 1 - Cross-platform formatting rules; release validation - cross-platform verification.
 
 ---
 
@@ -223,7 +223,7 @@ The feature seems trivial, so teams rely on local clicking instead of automated 
 - Refactors require fully manual retesting.
 
 **Phase to address:**
-Phase 1 - formatter tests; Phase 4 - release validation matrix.
+Phase 1 - formatter tests; release validation - release validation matrix.
 
 ## Technical Debt Patterns
 
@@ -301,7 +301,7 @@ Phase 1 - formatter tests; Phase 4 - release validation matrix.
 | Noisy command UX | Phase 2 | Repeated use feels non-disruptive and invalid contexts are hidden/disabled where possible |
 | Keybinding conflicts | Phase 2 | Default shortcuts work on each target OS in editor focus without obvious collisions |
 | Packaging/marketplace sloppiness | Phase 3 | `vsce package` succeeds, VSIX contents are clean, metadata assets are complete |
-| Missing integration tests | Phase 4 | CI runs extension tests and release checklist covers remote + cross-platform sanity checks |
+| Missing integration tests | Release readiness | CI runs extension tests and release checklist covers remote + cross-platform sanity checks |
 
 ## Sources
 

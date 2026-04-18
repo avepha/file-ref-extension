@@ -26,6 +26,12 @@ type KeybindingContribution = {
   mac?: string;
 };
 
+type MenuContribution = {
+  command: string;
+  when?: string;
+  group?: string;
+};
+
 type ReadmeCommandRow = {
   id: string;
   title: string;
@@ -35,6 +41,9 @@ type ManifestShape = {
   contributes: {
     commands: CommandContribution[];
     keybindings: KeybindingContribution[];
+    menus?: {
+      'editor/context'?: MenuContribution[];
+    };
   };
 };
 
@@ -187,6 +196,24 @@ describe('release assets', () => {
 
   it('keeps README command titles and platform shortcuts aligned with the manifest', () => {
     assert.doesNotThrow(() => assertReadmeMatchesManifest(readme, manifest));
+  });
+
+  it('contributes both reference commands to the editor context menu for file editors', () => {
+    const editorContextMenu = manifest.contributes.menus?.['editor/context'] ?? [];
+    const menuByCommand = new Map(editorContextMenu.map((item) => [item.command, item]));
+
+    assert.deepEqual(
+      [...menuByCommand.keys()].sort(),
+      ['fileReference.copyAbsoluteReference', 'fileReference.copyRelativeReference'],
+    );
+    assert.equal(
+      menuByCommand.get('fileReference.copyAbsoluteReference')?.when,
+      'editorTextFocus && !isInDiffEditor && resourceScheme == file',
+    );
+    assert.equal(
+      menuByCommand.get('fileReference.copyRelativeReference')?.when,
+      'editorTextFocus && !isInDiffEditor && resourceScheme == file',
+    );
   });
 
   it('fails with a section-specific message when README shortcuts drift from the manifest', () => {

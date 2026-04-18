@@ -27,3 +27,4 @@ dist/
 .planning/phases/*/*-UAT.md
 .planning/phases/*/*-HUMAN-UAT.md
 .planning/phases/*/*-VERIFICATION.md
+.codex

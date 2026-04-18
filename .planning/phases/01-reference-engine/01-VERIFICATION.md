@@ -86,7 +86,7 @@ No orphaned Phase 1 requirements were found after this verification report was a
 
 ### Gaps Summary
 
-No code or verification gaps were found inside the Phase 1 reference-engine scope. The Phase 4 closure work only needed to restore formal audit evidence; no implementation changes were required.
+No code or verification gaps were found inside the Phase 1 reference-engine scope. The follow-up work only needed to restore formal audit evidence; no implementation changes were required.
 
 ---
 

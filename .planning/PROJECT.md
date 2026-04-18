@@ -2,7 +2,7 @@
 
 ## What This Is
 
-File Reference is a VS Code extension that lets developers copy an AI-friendly file reference from the active editor in one keypress. It is built for people using AI-assisted coding tools who frequently need a file path plus a current line or selected line range without manual cleanup.
+File Reference is a shipped VS Code extension MVP that lets developers copy an AI-friendly file reference from the active editor in one keypress. It is built for people using AI-assisted coding tools who frequently need a file path plus a current line or selected line range without manual cleanup.
 
 ## Core Value
 
@@ -18,11 +18,10 @@ Copy a correct, paste-ready file reference from VS Code instantly, with predicta
 - [x] The extension provides both Command Palette commands and default keyboard shortcuts on macOS, Windows, and Linux.
 - [x] Successful copies write directly to the clipboard and show a success toast; unsupported editor states show a clear error message.
 - [x] The MVP is suitable for public release on VS Code Marketplace and Open VSX.
-- [x] Validated in Phase 4: restored formal verification evidence for the Phase 1 reference-engine requirements.
 
 ### Active
 
-- None.
+- None yet. Define the next milestone before re-opening active product requirements.
 
 ### Out of Scope
 
@@ -32,7 +31,7 @@ Copy a correct, paste-ready file reference from VS Code instantly, with predicta
 
 ## Context
 
-The project starts from a concrete product requirements document for a greenfield VS Code extension named File Reference. The main use case is a developer working in the editor who wants to paste references such as `/path/to/project/src/main.cpp:123`, `/path/to/project/src/main.cpp:123-234`, `src/main.cpp:123`, or `src/main.cpp:123-234` into an AI assistant or similar developer tooling. The product should feel immediate, predictable, minimal, and optimized for repeated daily use without requiring configuration in the MVP.
+The project started from a concrete product requirements document for a greenfield VS Code extension named File Reference. The shipped v1.0 MVP now covers deterministic absolute and workspace-relative references, editor validation, direct clipboard copy, keyboard shortcuts, and release packaging/docs suitable for public distribution. The next milestone can build on that base instead of re-litigating the MVP contract.
 
 ## Constraints
 
@@ -47,11 +46,23 @@ The project starts from a concrete product requirements document for a greenfiel
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Provide two commands: absolute and relative copy | Users need both workspace-agnostic and workspace-friendly references depending on the target tool and context | — Pending |
-| Format output as `path:line` or `path:start-end` only | Plain-text references are the fastest, most interoperable format for AI coding workflows | — Pending |
-| Normalize selections so `start <= end` | Selection direction should never change the copied result | — Pending |
-| Fall back to absolute path when relative path cannot be resolved | Relative copy should still succeed for files outside a workspace folder | — Pending |
-| Ship with default keybindings plus Command Palette support | The feature must be accessible both as a one-keypress habit and as a discoverable command | — Pending |
+| Provide two commands: absolute and relative copy | Users need both workspace-agnostic and workspace-friendly references depending on the target tool and context | Shipped in v1.0 |
+| Format output as `path:line` or `path:start-end` only | Plain-text references are the fastest, most interoperable format for AI coding workflows | Shipped in v1.0 |
+| Normalize selections so `start <= end` | Selection direction should never change the copied result | Shipped in v1.0 |
+| Fall back to absolute path when relative path cannot be resolved | Relative copy should still succeed for files outside a workspace folder | Shipped in v1.0 |
+| Ship with default keybindings plus Command Palette support | The feature must be accessible both as a one-keypress habit and as a discoverable command | Shipped in v1.0 |
+
+## Current State
+
+- **Latest shipped milestone:** v1.0 MVP
+- **Status:** Core scope complete and archived
+- **Release posture:** Packaging, docs, VSIX hygiene, and audit gates are in place; actual marketplace publishing still depends on maintainer credentials and final manual release execution
+
+## Next Milestone Goals
+
+- Decide whether the next milestone should focus on usability surfaces, format variants, or distribution follow-through.
+- Create a fresh `.planning/REQUIREMENTS.md` before adding new roadmap phases.
+- Treat deferred v2 ideas as inputs, not commitments.
 
 ## Evolution
 
