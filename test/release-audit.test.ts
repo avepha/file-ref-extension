@@ -102,7 +102,7 @@ describe('release audit gate', () => {
 
     assert.match(dependabot, /package-ecosystem:\s+npm/);
     assert.match(dependabot, /package-ecosystem:\s+github-actions/);
-    assert.match(codeql, /github\/codeql-action\/init@v3/);
+    assert.match(codeql, /github\/codeql-action\/init@v4/);
     assert.match(codeql, /security-events:\s+write/);
     assert.match(security, /private vulnerability reporting/i);
   });
