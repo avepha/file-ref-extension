@@ -2,21 +2,17 @@
 
 ## What This Is
 
-File Reference is a shipped VS Code extension and an expanding cross-IDE product for copying AI-friendly file references from the active editor in one step. The current milestone extends the product to JetBrains IDEs through an IntelliJ Platform plugin while preserving the same core promise: copy a correct, paste-ready file reference with predictable formatting and minimal friction.
+File Reference is a shipped cross-IDE product for copying AI-friendly file references from the active editor in one step. It now has a released VS Code extension and a completed JetBrains plugin milestone that preserves the same core promise: copy a correct, paste-ready file reference with predictable formatting and minimal friction.
 
 ## Core Value
 
 Copy a correct, paste-ready file reference from the active editor instantly, with predictable formatting and minimal friction.
 
-## Current Milestone: v2.0 JetBrains Plugin
+## Current State
 
-**Goal:** Deliver a JetBrains plugin version of File Reference that matches the core v1.0 copy workflow closely, adapts it to JetBrains-native action patterns, and prepares the plugin for JetBrains Marketplace publication without performing the real publish.
-
-**Target features:**
-- Broad JetBrains IDE support from the start using shared IntelliJ Platform APIs where possible.
-- Absolute and project-relative copy actions with deterministic `path:line` and `path:start-end` output.
-- JetBrains-native action registration, keyboard-driven access, and concise copy feedback.
-- Build, verification, signing-ready configuration, and marketplace listing assets needed for publish readiness.
+- **Latest shipped milestones:** v1.0 VS Code MVP and v2.0 JetBrains Plugin
+- **Current release posture:** VS Code packaging remains in place, and the JetBrains plugin is archived as shipped milestone work with a manual marketplace submission path ready when needed
+- **Planning status:** No active milestone is open; the project is ready for fresh requirements and roadmap definition
 
 ## Requirements
 
@@ -34,7 +30,7 @@ Copy a correct, paste-ready file reference from the active editor instantly, wit
 
 ### Active
 
-None - all currently planned milestone requirements are validated.
+None - the next milestone has not been defined yet.
 
 ### Out of Scope
 
@@ -45,13 +41,13 @@ None - all currently planned milestone requirements are validated.
 
 ## Context
 
-The project began as a focused VS Code extension and shipped a complete v1.0 MVP covering deterministic reference formatting, clipboard workflow, and release readiness. The next milestone is a platform expansion rather than a re-think of the product: move the same core promise into the JetBrains ecosystem using the IntelliJ Platform.
+The project began as a focused VS Code extension and shipped a complete v1.0 MVP covering deterministic reference formatting, clipboard workflow, and release readiness. Milestone v2.0 then expanded that validated workflow into the JetBrains ecosystem using the IntelliJ Platform, while keeping the product contract stable across IDEs.
 
-Research for this milestone points to a modern Gradle-based IntelliJ Platform plugin using the IntelliJ Platform Gradle Plugin 2.x, JetBrains Action System registrations, verifier tasks, signing hooks, and marketplace listing preparation. The main complexity is ecosystem translation: JetBrains IDE support, plugin metadata and compatibility ranges, and action/clipboard behavior need to feel native without drifting from the product's simple copy-first contract.
+With v2.0 archived, the project is in a brownfield state: the core cross-IDE workflow is proven, release assets exist for both IDE families, and future work can focus on either deeper product functionality or live distribution follow-through rather than foundational platform work.
 
 ## Constraints
 
-- **Platform**: JetBrains plugin for common IntelliJ Platform IDEs — behavior should work broadly, not just in IntelliJ IDEA.
+- **Platform**: The product now spans VS Code and JetBrains IDEs — behavior should stay consistent where the user-visible contract overlaps.
 - **Editor support**: Supported text editors with local file references only — unsupported states must fail clearly instead of producing ambiguous output.
 - **Output format**: POSIX-style forward slashes and normalized line ranges — copied references must remain deterministic across platforms and IDEs.
 - **UX**: Keep the workflow close to the VS Code MVP while allowing JetBrains-native action patterns and menus.
@@ -67,17 +63,28 @@ Research for this milestone points to a modern Gradle-based IntelliJ Platform pl
 | Keep the output contract as close as possible to v1.0 | Deterministic plain-text references are the product's main differentiator and should not drift during the port | Validated in Phases 5 and 6 through shared formatting behavior and fallback messaging parity |
 | Allow JetBrains-native UX differences where they improve fit | Action registration, keymaps, and menus should feel native in JetBrains even when behavior parity is preserved | Validated in Phase 6 through JetBrains action registration and notification handling |
 | Prepare publishing assets but stop before actual marketplace upload | This milestone should remove release-preparation risk without depending on maintainer credentials or a live publish event | Implemented in Phase 7 through release validation, signing-ready configuration, listing assets, and manual submission docs |
-
-## Current State
-
-- **Latest shipped milestone:** v1.0 VS Code MVP
-- **Current focus:** v2.0 JetBrains plugin wrap-up and future manual marketplace submission
-- **Release posture:** VS Code marketplace packaging remains in place, and the JetBrains plugin now has a verified release path, packaged marketplace assets, and manual submission documentation without requiring a live publish
+| Standardize the public product identity across IDEs | Cross-IDE distribution is easier to explain and maintain when marketplace names, package IDs, and docs point to one product | Implemented in Phase 8 through the shared `Copy File Path with Line Numbers (AI Prompt)` rename |
 
 ## Next Milestone Goals
 
-- Close out milestone v2.0 once the maintainer is ready to archive the completed JetBrains plugin work.
-- Use the prepared manual runbook if and when a live JetBrains Marketplace submission is desired.
+- Decide whether the next milestone is distribution-focused, product-depth-focused, or both.
+- If JetBrains distribution is the immediate priority, use the prepared manual runbook to perform the live marketplace submission as milestone work rather than ad hoc follow-up.
+- If product depth is the next priority, define fresh requirements around settings, alternate formats, or richer action surfaces instead of carrying over old scope implicitly.
+
+<details>
+<summary>Archived Milestone Context</summary>
+
+### Closed Milestone: v2.0 JetBrains Plugin
+
+**Goal:** Deliver a JetBrains plugin version of File Reference that matches the core v1.0 copy workflow closely, adapts it to JetBrains-native action patterns, and prepares the plugin for JetBrains Marketplace publication without performing the real publish.
+
+**Target features:**
+- Broad JetBrains IDE support from the start using shared IntelliJ Platform APIs where possible.
+- Absolute and project-relative copy actions with deterministic `path:line` and `path:start-end` output.
+- JetBrains-native action registration, keyboard-driven access, and concise copy feedback.
+- Build, verification, signing-ready configuration, and marketplace listing assets needed for publish readiness.
+
+</details>
 
 ## Evolution
 
@@ -97,4 +104,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-18 after Phase 7 execution*
+*Last updated: 2026-04-18 after v2.0 milestone closeout*
