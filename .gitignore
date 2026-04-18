@@ -2,6 +2,7 @@ node_modules/
 .build/
 dist/
 *.vsix
+.idea/
 
 # Local OS metadata
 .DS_Store
