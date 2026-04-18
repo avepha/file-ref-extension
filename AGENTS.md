@@ -165,6 +165,8 @@ Use these entry points:
 - `/gsd-execute-phase` for planned phase work
 
 Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
+
+Planning artifacts under `.planning/` are internal workflow state for this public repo. When gap-planning or roadmap updates create empty phase directories, do not force them into git with placeholder files; only commit the roadmap and requirements files explicitly called for by the workflow. Empty `.planning/phases/*` directories are expected to remain local and untracked until they contain real non-sensitive planning documents that should be versioned.
 <!-- GSD:workflow-end -->
 
 
