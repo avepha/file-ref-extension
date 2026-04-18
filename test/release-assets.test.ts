@@ -201,6 +201,7 @@ describe('release assets', () => {
       'CONTRIBUTING.md',
       'CHANGELOG.md',
       'LICENSE',
+      'SECURITY.md',
       '.vscodeignore',
       'docs/release-checklist.md',
       'media/icon.png',
@@ -211,6 +212,16 @@ describe('release assets', () => {
 
   it('checks in the release validation workflow', () => {
     assert.equal(existsSync(rootPath('.github', 'workflows', 'release-validation.yml')), true);
+  });
+
+  it('checks in baseline repository security files', () => {
+    for (const relativePath of [
+      '.github/CODEOWNERS',
+      '.github/dependabot.yml',
+      '.github/workflows/codeql.yml',
+    ]) {
+      assert.equal(existsSync(rootPath(relativePath)), true, `${relativePath} should exist`);
+    }
   });
 
   it('keeps GitHub and marketplace README command titles and platform shortcuts aligned with the manifest', () => {

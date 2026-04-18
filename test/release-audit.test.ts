@@ -84,4 +84,22 @@ describe('release audit gate', () => {
     assert.match(workflow, /VSCE_PAT/);
     assert.match(workflow, /OVSX_PAT/);
   });
+
+  it('keeps release validation on read-only repository permissions', () => {
+    const workflow = readFileSync(rootPath('.github', 'workflows', 'release-validation.yml'), 'utf8');
+
+    assert.match(workflow, /permissions:\n\s+contents:\s+read/);
+  });
+
+  it('defines baseline repository security automation', () => {
+    const dependabot = readFileSync(rootPath('.github', 'dependabot.yml'), 'utf8');
+    const codeql = readFileSync(rootPath('.github', 'workflows', 'codeql.yml'), 'utf8');
+    const security = readFileSync(rootPath('SECURITY.md'), 'utf8');
+
+    assert.match(dependabot, /package-ecosystem:\s+npm/);
+    assert.match(dependabot, /package-ecosystem:\s+github-actions/);
+    assert.match(codeql, /github\/codeql-action\/init@v3/);
+    assert.match(codeql, /security-events:\s+write/);
+    assert.match(security, /private vulnerability reporting/i);
+  });
 });
