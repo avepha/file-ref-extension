@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/avepha/file-ref-extension/compare/v1.0.1...v1.1.0) (2026-04-18)
+
+
+### Features
+
+* finalize v1.0 MVP with roadmap and requirements documentation ([dd57ce2](https://github.com/avepha/file-ref-extension/commit/dd57ce2a0dbb05c8c4ae03120eb53dad6c384837))
+
 ## [1.0.1](https://github.com/avepha/file-ref-extension/compare/v1.0.0...v1.0.1) (2026-04-17)
 
 
