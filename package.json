@@ -2,7 +2,7 @@
   "name": "file-reference",
   "displayName": "File Reference",
   "description": "Copy AI-friendly file references from the active editor.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "avepha",
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
