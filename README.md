@@ -11,7 +11,7 @@ Copy deterministic file paths with line numbers from the active VS Code editor i
 
 ### VSCode
 <p>
-<img width="720" height="480" alt="image" src="https://github.com/user-attachments/assets/c07302a5-edf5-4663-a0ca-e8910934c32a" />
+<img width="720" height="480" alt="image" src="https://github.com/user-attachments/assets/42c32b55-afc3-486f-a84a-94525b0743c2" />
 </p>
 
 ### Jetbrains IDEs
