@@ -5,7 +5,7 @@ Copy deterministic AI-ready file references from the active VS Code editor in on
 ## Install
 
 - Open VSX: [open-vsx.org/extension/avepha/file-reference](https://open-vsx.org/extension/avepha/file-reference)
-- VS Code Marketplace: [marketplace.visualstudio.com/items?itemName=avepha.file-reference](https://marketplace.visualstudio.com/items?itemName=avepha.file-reference) (currently returns `404` until the Marketplace listing is live)
+- VS Code Marketplace: [marketplace.visualstudio.com/items?itemName=avepha.file-reference](https://marketplace.visualstudio.com/items?itemName=avepha.file-reference)
 
 ## What it does
 
