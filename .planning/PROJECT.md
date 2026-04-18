@@ -18,6 +18,7 @@ Copy a correct, paste-ready file reference from VS Code instantly, with predicta
 - [x] The extension provides both Command Palette commands and default keyboard shortcuts on macOS, Windows, and Linux.
 - [x] Successful copies write directly to the clipboard and show a success toast; unsupported editor states show a clear error message.
 - [x] The MVP is suitable for public release on VS Code Marketplace and Open VSX.
+- [x] Validated in Phase 4: restored formal verification evidence for the Phase 1 reference-engine requirements.
 
 ### Active
 
@@ -70,4 +71,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-17*
+*Last updated: 2026-04-18*
