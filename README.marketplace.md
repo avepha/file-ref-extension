@@ -1,10 +1,10 @@
-# File Reference
+# Copy File Path with Line Numbers (AI Prompt)
 
-Copy deterministic AI-ready file references from the active VS Code editor in one keypress.
+Copy deterministic file paths with line numbers from the active VS Code editor in one keypress.
 
 ## What it does
 
-VS Code can copy a file path, and some extensions can copy a path plus line numbers, but they often vary by platform, output style, or editor state. File Reference is intentionally narrow: it copies one predictable plain-text format for prompting AI tools.
+Copy File Path with Line Numbers (AI Prompt) is a focused developer utility for producing a clean `path:line` or `path:start-end` reference in one step. It is especially helpful for AI prompting, while staying useful for code reviews, bug reports, and personal notes.
 
 It always produces POSIX-style slash paths with normalized `path:line` or `path:start-end` output for the active saved local file.
 
@@ -16,8 +16,8 @@ It always produces POSIX-style slash paths with normalized `path:line` or `path:
 
 | Command ID | Command Palette title |
 | --- | --- |
-| `fileReference.copyAbsoluteReference` | `File Reference: Copy Absolute Path with Line` |
-| `fileReference.copyRelativeReference` | `File Reference: Copy Relative Path with Line` |
+| `copyFilePathWithLineNumbers.copyAbsoluteReference` | `Copy Absolute File Path with Line Numbers` |
+| `copyFilePathWithLineNumbers.copyRelativeReference` | `Copy Relative File Path with Line Numbers` |
 
 ## Default shortcuts
 

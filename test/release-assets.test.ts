@@ -141,8 +141,8 @@ function getExpectedReadmeDocs(manifest: ManifestShape): ReadmeDocs {
   }));
   const keybindingByCommand = new Map(manifest.contributes.keybindings.map((binding) => [binding.command, binding]));
 
-  const absoluteBinding = keybindingByCommand.get('fileReference.copyAbsoluteReference');
-  const relativeBinding = keybindingByCommand.get('fileReference.copyRelativeReference');
+  const absoluteBinding = keybindingByCommand.get('copyFilePathWithLineNumbers.copyAbsoluteReference');
+  const relativeBinding = keybindingByCommand.get('copyFilePathWithLineNumbers.copyRelativeReference');
 
   assert.ok(absoluteBinding, 'Manifest missing absolute reference keybinding');
   assert.ok(relativeBinding, 'Manifest missing relative reference keybinding');
@@ -246,14 +246,17 @@ describe('release assets', () => {
 
     assert.deepEqual(
       [...menuByCommand.keys()].sort(),
-      ['fileReference.copyAbsoluteReference', 'fileReference.copyRelativeReference'],
+      [
+        'copyFilePathWithLineNumbers.copyAbsoluteReference',
+        'copyFilePathWithLineNumbers.copyRelativeReference',
+      ],
     );
     assert.equal(
-      menuByCommand.get('fileReference.copyAbsoluteReference')?.when,
+      menuByCommand.get('copyFilePathWithLineNumbers.copyAbsoluteReference')?.when,
       'editorTextFocus && !isInDiffEditor && resourceScheme == file',
     );
     assert.equal(
-      menuByCommand.get('fileReference.copyRelativeReference')?.when,
+      menuByCommand.get('copyFilePathWithLineNumbers.copyRelativeReference')?.when,
       'editorTextFocus && !isInDiffEditor && resourceScheme == file',
     );
   });
@@ -268,7 +271,10 @@ describe('release assets', () => {
   });
 
   it('fails with a section-specific message when README command IDs drift from the manifest', () => {
-    const driftedReadme = githubReadme.replace('`fileReference.copyAbsoluteReference`', '`fileReference.copyAbsoulteReference`');
+    const driftedReadme = githubReadme.replace(
+      '`copyFilePathWithLineNumbers.copyAbsoluteReference`',
+      '`copyFilePathWithLineNumbers.copyAbsoulteReference`',
+    );
 
     assert.throws(
       () => assertReadmeMatchesManifest(driftedReadme, manifest),

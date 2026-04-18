@@ -43,11 +43,11 @@ describe('package.json contributions', () => {
     assert.deepEqual(commands, [
       {
         command: COPY_ABSOLUTE_REFERENCE_COMMAND,
-        title: 'File Reference: Copy Absolute Path with Line',
+        title: 'Copy Absolute File Path with Line Numbers',
       },
       {
         command: COPY_RELATIVE_REFERENCE_COMMAND,
-        title: 'File Reference: Copy Relative Path with Line',
+        title: 'Copy Relative File Path with Line Numbers',
       },
     ]);
   });
@@ -75,8 +75,8 @@ describe('package.json contributions', () => {
   it('includes release metadata and packaging scripts required for publishing', () => {
     const pkg = loadPackageJson();
 
-    assert.equal(pkg.displayName, 'File Reference');
-    assert.equal(pkg.description, 'Copy AI-friendly file references from the active editor.');
+    assert.equal(pkg.displayName, 'Copy File Path with Line Numbers (AI Prompt)');
+    assert.equal(pkg.description, 'Copy deterministic file paths with line numbers for prompts, reviews, and notes.');
     assert.equal(pkg.license, 'SEE LICENSE IN LICENSE');
     assert.equal(pkg.pricing, 'Free');
     assert.equal((pkg as PackageJson & { publisher?: string }).publisher, 'avepha');
@@ -91,10 +91,11 @@ describe('package.json contributions', () => {
     assert.equal(pkg.icon, 'media/icon.png');
     assert.deepEqual(pkg.keywords, [
       'ai',
+      'ai-prompt',
       'claude-code',
       'opencode',
-      'file-reference',
-      'path',
+      'file-path',
+      'line-numbers',
       'clipboard',
     ]);
     assert.equal(pkg.scripts?.['vscode:prepublish'], 'npm run build');

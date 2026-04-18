@@ -58,7 +58,7 @@
 | Relative copy uses workspace-relative path with absolute fallback | Unit tests + CI on macOS, Windows, Linux | Trigger relative copy for both in-workspace and out-of-workspace files |
 | Unsupported editor states fail clearly | Workflow tests | Try an untitled or non-file editor and verify the error toast |
 | Slash-normalized output on all platforms | Path/reference tests + CI on macOS, Windows, Linux | On Windows, confirm copied output still uses forward slashes |
-| Extension stays UI-hosted for clipboard behavior | Manifest check (`extensionKind: ["ui"]`) | In a remote window, verify `Developer: Show Running Extensions` lists File Reference under Local |
+| Extension stays UI-hosted for clipboard behavior | Manifest check (`extensionKind: ["ui"]`) | In a remote window, verify `Developer: Show Running Extensions` lists Copy File Path with Line Numbers (AI Prompt) under Local |
 
 ## Remaining manual checks
 

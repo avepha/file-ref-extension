@@ -1,0 +1,52 @@
+<idea-plugin>
+    <id>com.avepha.copy-file-path-with-line-numbers</id>
+    <name>Copy File Path with Line Numbers (AI Prompt)</name>
+    <vendor>avepha</vendor>
+    <depends>com.intellij.modules.platform</depends>
+    <description><![CDATA[
+    <p>Copy a correct, paste-ready file path with line numbers from the active JetBrains editor with predictable formatting and minimal friction.</p>
+    <p>Copy File Path with Line Numbers (AI Prompt) stays intentionally narrow: it copies deterministic absolute or project-relative references for saved local files only, using normalized <code>path:line</code> and <code>path:start-end</code> output for AI prompting, reviews, and notes.</p>
+    <ul>
+      <li>Absolute and relative copy actions with workspace fallback</li>
+      <li>POSIX-style forward slashes on every platform</li>
+      <li>Clear failure feedback for unsupported editor states</li>
+    </ul>
+    ]]></description>
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Copy File Path with Line Numbers" displayType="BALLOON" isLogByDefault="false"/>
+    </extensions>
+    <actions>
+        <action
+            id="com.avepha.copyfilepathwithlinenumbers.copyAbsoluteReference"
+            class="com.avepha.copyfilepathwithlinenumbers.actions.CopyAbsoluteReferenceAction"
+            text="Copy Absolute File Path with Line Numbers"
+            description="Copy an absolute file path with line numbers for the active editor selection">
+            <synonym text="Copy absolute file path with line numbers"/>
+            <synonym text="Copy absolute path with line"/>
+            <abbreviation value="cfa"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="EditorCopy"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt shift C"/>
+            <keyboard-shortcut
+                keymap="Mac OS X 10.5+"
+                first-keystroke="alt shift C"
+                replace-all="true"/>
+        </action>
+        <action
+            id="com.avepha.copyfilepathwithlinenumbers.copyRelativeReference"
+            class="com.avepha.copyfilepathwithlinenumbers.actions.CopyRelativeReferenceAction"
+            text="Copy Relative File Path with Line Numbers"
+            description="Copy a project-relative file path with line numbers for the active editor selection">
+            <synonym text="Copy relative file path with line numbers"/>
+            <synonym text="Copy relative path with line"/>
+            <abbreviation value="cfr"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="EditorCopy"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control alt C"/>
+            <keyboard-shortcut
+                keymap="Mac OS X 10.5+"
+                first-keystroke="alt C"
+                replace-all="true"/>
+        </action>
+    </actions>
+</idea-plugin>
