@@ -15,6 +15,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Reference Engine** - Deliver correct, deterministic file-reference generation for supported editor states.
 - [ ] **Phase 2: Command Workflow** - Make the copy flow accessible from commands and shortcuts with clipboard and notification feedback.
 - [ ] **Phase 3: Release Readiness** - Verify cross-platform consistency and package the extension for public distribution.
+- [ ] **Phase 4: Verify Reference Engine** - Close Phase 1 audit gaps by restoring requirement-level verification evidence.
+- [ ] **Phase 5: Verify Command Workflow** - Close Phase 2 audit gaps by restoring requirement-level verification evidence.
+- [ ] **Phase 6: Complete Live Release Validation** - Finish the manual release checks the audit still requires for milestone closure.
 
 ## Phase Details
 
@@ -108,13 +111,87 @@ Plans:
 - [x] 03-02-PLAN.md — Align README command/shortcut docs with the shipped manifest and add drift detection.
 - [x] 03-03-PLAN.md — Remove high-severity audit findings and enforce audit review in release validation.
 
+### Phase 4: Verify Reference Engine
+**Goal**: Close the audit blocker on Phase 1 by adding missing verification evidence for the reference-engine requirements already implemented in the codebase.
+**Depends on**: Phase 3 and milestone audit review
+**Requirements**: EDIT-01, EDIT-02, REF-01, REF-02, REF-03, REF-04, REF-05
+**Gap Closure**: Closes the audit gap created by the missing `01-VERIFICATION.md`
+**Success Criteria** (what must be TRUE):
+  1. Phase 1 has a `VERIFICATION.md` with explicit requirement-level evidence and verdicts.
+  2. `EDIT-01`, `EDIT-02`, and `REF-01` through `REF-05` are no longer orphaned in the milestone audit cross-check.
+  3. Verification evidence ties back to the shipped implementation, tests, and planned scope without reopening Phase 1 design work.
+**Plans**: 1 planned
+
+#### Plan 4.1: Restore Phase 1 Verification Evidence
+**Outcome**: The audit can trace every Phase 1 requirement through requirements mapping, shipped implementation evidence, and a formal verification report.
+**Covers**: EDIT-01, EDIT-02, REF-01, REF-02, REF-03, REF-04, REF-05
+**Key work**:
+- Review the existing Phase 1 plan, summary, tests, and implementation to rebuild the verification record.
+- Write `01-VERIFICATION.md` with explicit evidence and final verdicts for each requirement.
+- Align any phase status metadata needed so the milestone audit no longer treats Phase 1 as orphaned.
+**Exit checks**:
+- Phase 1 verification exists and is auditable.
+- Every Phase 1 requirement is explicitly covered in the verification report.
+- Re-running milestone audit should no longer report missing verification for Phase 1.
+
+### Phase 5: Verify Command Workflow
+**Goal**: Close the audit blocker on Phase 2 by adding missing verification evidence for the command, clipboard, and notification requirements already implemented in the codebase.
+**Depends on**: Phase 4
+**Requirements**: ACC-01, CLIP-01, CLIP-02, CLIP-03
+**Gap Closure**: Closes the audit gap created by the missing `02-VERIFICATION.md`
+**Success Criteria** (what must be TRUE):
+  1. Phase 2 has a `VERIFICATION.md` with explicit requirement-level evidence and verdicts.
+  2. `ACC-01` and `CLIP-01` through `CLIP-03` are no longer orphaned in the milestone audit cross-check.
+  3. Verification evidence proves the shared command workflow, clipboard writes, and feedback behavior already shipped in the repo.
+**Plans**: 1 planned
+
+#### Plan 5.1: Restore Phase 2 Verification Evidence
+**Outcome**: The audit can trace the Phase 2 command workflow requirements through requirements mapping, shipped implementation evidence, and a formal verification report.
+**Covers**: ACC-01, CLIP-01, CLIP-02, CLIP-03
+**Key work**:
+- Review the existing Phase 2 plan, summary, tests, and implementation to rebuild the verification record.
+- Write `02-VERIFICATION.md` with explicit evidence and final verdicts for each requirement.
+- Align any phase status metadata needed so the milestone audit no longer treats Phase 2 as orphaned.
+**Exit checks**:
+- Phase 2 verification exists and is auditable.
+- Every Phase 2 requirement in scope is explicitly covered in the verification report.
+- Re-running milestone audit should no longer report missing verification for Phase 2.
+
+### Phase 6: Complete Live Release Validation
+**Goal**: Finish the remaining human-only release validation so the milestone audit can clear the live publish and live host behavior requirements.
+**Depends on**: Phase 5
+**Requirements**: ACC-02, ACC-03, REL-01, REL-02
+**Gap Closure**: Closes the remaining Phase 2 -> Phase 3 integration gap, the live host smoke-test flow gap, and the credentialed publish gap
+**Success Criteria** (what must be TRUE):
+  1. Live VS Code host validation is recorded for command palette, default keybindings, clipboard behavior, and notifications on supported desktop platforms.
+  2. Remote/UI-host placement expectations are confirmed and documented for the shipped extension.
+  3. Marketplace and Open VSX publish validation is completed with maintainer credentials and captured in verification artifacts.
+  4. Phase 3 verification no longer leaves `REL-01` or `REL-02` in a human-needed state.
+**Plans**: 1 planned
+
+#### Plan 6.1: Close Live Validation And Publish Gaps
+**Outcome**: The release workflow has the manual evidence the audit requires to treat cross-platform behavior and real publishing as satisfied instead of partial.
+**Covers**: ACC-02, ACC-03, REL-01, REL-02
+**Key work**:
+- Run and record live extension-host smoke checks across supported platforms.
+- Verify default shortcut behavior, clipboard integration, and success/failure notifications in real VS Code hosts.
+- Execute credentialed Marketplace and Open VSX publish validation and record outcomes.
+- Update release verification artifacts and checklist evidence to remove the remaining human-needed audit gaps.
+**Exit checks**:
+- Audit evidence exists for the live host behavior requirements.
+- Publish validation has real registry evidence, not just packaging proof.
+- Re-running milestone audit should no longer report the current Phase 3 partials or related integration gaps.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Reference Engine | 2/2 | Complete | 2026-04-17 |
 | 2. Command Workflow | 2/2 | Complete | 2026-04-17 |
 | 3. Release Readiness | 3/3 | Complete | 2026-04-17 |
+| 4. Verify Reference Engine | 0/1 | Pending | - |
+| 5. Verify Command Workflow | 0/1 | Pending | - |
+| 6. Complete Live Release Validation | 0/1 | Pending | - |
