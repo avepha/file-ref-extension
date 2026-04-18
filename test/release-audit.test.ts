@@ -7,6 +7,10 @@ function rootPath(...parts: string[]): string {
   return path.resolve(__dirname, '..', '..', ...parts);
 }
 
+function readTextFile(...parts: string[]): string {
+  return readFileSync(rootPath(...parts), 'utf8').replace(/\r\n/g, '\n');
+}
+
 describe('release audit gate', () => {
   it('keeps package.json release validation wired through npm audit', () => {
     const packageJson = JSON.parse(readFileSync(rootPath('package.json'), 'utf8')) as {
@@ -26,7 +30,7 @@ describe('release audit gate', () => {
   });
 
   it('requires release validation workflow to run the audit gate before packaging', () => {
-    const workflow = readFileSync(rootPath('.github', 'workflows', 'release-validation.yml'), 'utf8');
+    const workflow = readTextFile('.github', 'workflows', 'release-validation.yml');
 
     const lines = workflow.split('\n');
     const packageStart = lines.indexOf('  package:');
@@ -56,7 +60,7 @@ describe('release audit gate', () => {
   });
 
   it('documents audit review in the maintainer release checklist', () => {
-    const checklist = readFileSync(rootPath('docs', 'release-checklist.md'), 'utf8');
+    const checklist = readTextFile('docs', 'release-checklist.md');
 
     assert.match(checklist, /npm run audit:check/);
     assert.match(checklist, /before packaging or publish/i);
@@ -64,8 +68,8 @@ describe('release audit gate', () => {
   });
 
   it('documents semantic-release commit rules and required secrets', () => {
-    const contributing = readFileSync(rootPath('CONTRIBUTING.md'), 'utf8');
-    const checklist = readFileSync(rootPath('docs', 'release-checklist.md'), 'utf8');
+    const contributing = readTextFile('CONTRIBUTING.md');
+    const checklist = readTextFile('docs', 'release-checklist.md');
 
     assert.match(contributing, /Conventional Commits/i);
     assert.match(contributing, /VSCE_PAT/);
@@ -76,7 +80,7 @@ describe('release audit gate', () => {
   });
 
   it('defines a semantic-release workflow on main', () => {
-    const workflow = readFileSync(rootPath('.github', 'workflows', 'release.yml'), 'utf8');
+    const workflow = readTextFile('.github', 'workflows', 'release.yml');
 
     assert.match(workflow, /branches:\n\s+- main/);
     assert.match(workflow, /fetch-depth:\s+0/);
@@ -86,15 +90,15 @@ describe('release audit gate', () => {
   });
 
   it('keeps release validation on read-only repository permissions', () => {
-    const workflow = readFileSync(rootPath('.github', 'workflows', 'release-validation.yml'), 'utf8');
+    const workflow = readTextFile('.github', 'workflows', 'release-validation.yml');
 
     assert.match(workflow, /permissions:\n\s+contents:\s+read/);
   });
 
   it('defines baseline repository security automation', () => {
-    const dependabot = readFileSync(rootPath('.github', 'dependabot.yml'), 'utf8');
-    const codeql = readFileSync(rootPath('.github', 'workflows', 'codeql.yml'), 'utf8');
-    const security = readFileSync(rootPath('SECURITY.md'), 'utf8');
+    const dependabot = readTextFile('.github', 'dependabot.yml');
+    const codeql = readTextFile('.github', 'workflows', 'codeql.yml');
+    const security = readTextFile('SECURITY.md');
 
     assert.match(dependabot, /package-ecosystem:\s+npm/);
     assert.match(dependabot, /package-ecosystem:\s+github-actions/);

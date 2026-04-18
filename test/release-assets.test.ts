@@ -7,6 +7,10 @@ function rootPath(...parts: string[]): string {
   return path.resolve(__dirname, '..', '..', ...parts);
 }
 
+function readTextFile(...parts: string[]): string {
+  return readFileSync(rootPath(...parts), 'utf8').replace(/\r\n/g, '\n');
+}
+
 const {
   inspectEntries,
   requiredEntries,
@@ -190,8 +194,8 @@ describe('release assets', () => {
     'extension/docs/release-checklist.md',
     'extension/media/icon.png',
   ];
-  const githubReadme = readFileSync(rootPath('README.md'), 'utf8');
-  const marketplaceReadme = readFileSync(rootPath('README.marketplace.md'), 'utf8');
+  const githubReadme = readTextFile('README.md');
+  const marketplaceReadme = readTextFile('README.marketplace.md');
   const manifest = JSON.parse(readFileSync(rootPath('package.json'), 'utf8')) as ManifestShape;
 
   it('checks in the root files needed for public distribution', () => {
