@@ -37,6 +37,7 @@ fun parseVerifierTarget(notation: String): Pair<IntelliJPlatformType, String> {
 
     val type = when (parts[0]) {
         "intellijIdea" -> IntelliJPlatformType.IntellijIdea
+        "androidStudio" -> IntelliJPlatformType.AndroidStudio
         "pycharm" -> IntelliJPlatformType.PyCharm
         "webstorm" -> IntelliJPlatformType.WebStorm
         else -> error("Unsupported verifier target '${parts[0]}'.")

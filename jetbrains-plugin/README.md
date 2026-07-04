@@ -2,6 +2,12 @@
 
 This Gradle project contains the JetBrains plugin for Copy File Path with Line Numbers (AI Prompt). It lives alongside the VS Code extension, but it uses an isolated IntelliJ Platform and Gradle toolchain under `jetbrains-plugin/`.
 
+## Compatibility
+
+- Runs on any IntelliJ Platform IDE at build `253` or later (`sinceBuild=253`, no upper bound), because the plugin depends only on `com.intellij.modules.platform`.
+- Android Studio is supported from **Panda 3 | 2025.3.3** (platform branch `253`) onward, through **Quail | 2026.1** (platform branch `261`) and any later release — there is no upper build bound.
+- The Plugin Verifier default targets pin both ends of that range: `androidStudio:2025.3.3.6` (Panda 3) and `androidStudio:2026.1.1.8` (Quail 1), plus `pycharm:2026.1` (see `gradle.properties`).
+
 ## Local Commands
 
 - `./gradlew runIde`

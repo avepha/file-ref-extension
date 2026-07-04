@@ -28,7 +28,7 @@ The product scope stays intentionally narrow. Copy File Path with Line Numbers (
 
 ## Supported IDE positioning
 
-Copy File Path with Line Numbers (AI Prompt) is built on shared IntelliJ Platform APIs and remains positioned as a JetBrains-platform plugin rather than a PyCharm-only tool. Phase 7 uses PyCharm as the default verification target because it is the maintainer-owned IDE, but the plugin continues to depend only on `com.intellij.modules.platform`.
+Copy File Path with Line Numbers (AI Prompt) is built on shared IntelliJ Platform APIs and remains positioned as a JetBrains-platform plugin rather than a single-IDE tool. Because it depends only on `com.intellij.modules.platform`, it runs across the IntelliJ Platform family, including Android Studio from Panda 3 | 2025.3.3 through Quail | 2026.1 and later releases. The compatibility floor is IntelliJ Platform build `253` (the Android Studio Panda branch) with no upper bound, and verification runs against both an older and a newer Android Studio build plus PyCharm.
 
 ## Supported editor-state boundaries
 

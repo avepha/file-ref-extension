@@ -4,7 +4,8 @@ This runbook is the source of truth for packaging and validating the JetBrains p
 
 ## Scope
 
-- Default compatibility verification targets PyCharm because it is the maintainer-owned IDE for Phase 7.
+- Default compatibility verification targets two Android Studio versions — `androidStudio:2025.3.3.6` (Panda 3 | 2025.3.3, platform branch `253`, the compatibility floor) and `androidStudio:2026.1.1.8` (Quail 1 | 2026.1.1, platform branch `261`, the newest stable) — plus PyCharm (`pycharm:2026.1`).
+- The compatibility floor is `sinceBuild=253`, matching the Android Studio Panda platform branch, with no upper bound.
 - The plugin remains positioned as a JetBrains-platform plugin because it still depends only on `com.intellij.modules.platform`.
 - Live publication stays out of scope for this phase; the publish path is wired but expected to stay dormant until marketplace credentials are available.
 
@@ -43,12 +44,12 @@ ls -1 build/distributions/
 - `verifyPluginProjectConfiguration` validates the Gradle and plugin setup.
 - `verifyPluginStructure` validates plugin archive structure and `plugin.xml`.
 - `verifyPlugin` runs the JetBrains Plugin Verifier against the IDE targets from `gradle.properties`.
-- The default Phase 7 target is `pycharm:2026.1`.
+- The default targets are `androidStudio:2025.3.3.6` (Panda 3 | 2025.3.3), `androidStudio:2026.1.1.8` (Quail 1 | 2026.1.1), and `pycharm:2026.1`.
 
 If broader coverage is needed later, temporarily override `verifierIdeTargets` when running Gradle instead of changing the committed default:
 
 ```bash
-./gradlew verifyPlugin -PverifierIdeTargets=pycharm:2026.1,intellijIdea:2026.1,webstorm:2026.1
+./gradlew verifyPlugin -PverifierIdeTargets=androidStudio:2025.3.3.6,androidStudio:2026.1.1.8,pycharm:2026.1,intellijIdea:2026.1,webstorm:2026.1
 ```
 
 ## Signing and publish configuration
