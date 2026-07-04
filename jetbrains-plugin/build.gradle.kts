@@ -14,10 +14,18 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+    // Target Java 17 bytecode so the plugin loads on every IDE from 2022.2 (JBR 17)
+    // through the latest (JBR 21 runs 17 bytecode). The JDK 21 toolchain is only used
+    // to compile against the newer platform SDK and to launch IDE-based Gradle tasks.
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 kotlin {
     jvmToolchain(21)
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
 }
 
 val intellijPlatformVersion = providers.gradleProperty("intellijPlatformVersion")
@@ -37,9 +45,16 @@ fun parseVerifierTarget(notation: String): Pair<IntelliJPlatformType, String> {
 
     val type = when (parts[0]) {
         "intellijIdea" -> IntelliJPlatformType.IntellijIdea
+        "intellijIdeaCommunity" -> IntelliJPlatformType.IntellijIdeaCommunity
         "androidStudio" -> IntelliJPlatformType.AndroidStudio
         "pycharm" -> IntelliJPlatformType.PyCharm
+        "pycharmCommunity" -> IntelliJPlatformType.PyCharmCommunity
         "webstorm" -> IntelliJPlatformType.WebStorm
+        "goland" -> IntelliJPlatformType.GoLand
+        "rider" -> IntelliJPlatformType.Rider
+        "clion" -> IntelliJPlatformType.CLion
+        "rubymine" -> IntelliJPlatformType.RubyMine
+        "phpstorm" -> IntelliJPlatformType.PhpStorm
         else -> error("Unsupported verifier target '${parts[0]}'.")
     }
 

@@ -4,8 +4,9 @@ This runbook is the source of truth for packaging and validating the JetBrains p
 
 ## Scope
 
-- Default compatibility verification targets two Android Studio versions — `androidStudio:2025.3.3.6` (Panda 3 | 2025.3.3, platform branch `253`, the compatibility floor) and `androidStudio:2026.1.1.8` (Quail 1 | 2026.1.1, platform branch `261`, the newest stable) — plus PyCharm (`pycharm:2026.1`).
-- The compatibility floor is `sinceBuild=253`, matching the Android Studio Panda platform branch, with no upper bound.
+- Default compatibility verification pins the floor and the current ends of the range: `intellijIdeaCommunity:2023.3` (the `233` floor), `androidStudio:2025.3.3.6` (Panda 3, branch `253`), `androidStudio:2026.1.1.8` (Quail 1, branch `261`), and `pycharm:2026.1`.
+- The compatibility floor is `sinceBuild=233` (2023.3) with no upper bound — the lowest build the modern Kotlin 2.3 / 2026.1-SDK toolchain verifies clean. Because the plugin depends only on `com.intellij.modules.platform`, one verifier run per representative build is enough — it does not need a target for every product (WebStorm, GoLand, Rider, CLion, RubyMine, PhpStorm, etc. all share the verified platform module). Those product names are accepted for on-demand `-PverifierIdeTargets` overrides when broader coverage is wanted.
+- Bytecode targets Java 17 so the plugin loads on JBR 17 IDEs (2023.3–2024.1) as well as JBR 21 IDEs (2024.2+).
 - The plugin remains positioned as a JetBrains-platform plugin because it still depends only on `com.intellij.modules.platform`.
 - Live publication stays out of scope for this phase; the publish path is wired but expected to stay dormant until marketplace credentials are available.
 
@@ -44,12 +45,12 @@ ls -1 build/distributions/
 - `verifyPluginProjectConfiguration` validates the Gradle and plugin setup.
 - `verifyPluginStructure` validates plugin archive structure and `plugin.xml`.
 - `verifyPlugin` runs the JetBrains Plugin Verifier against the IDE targets from `gradle.properties`.
-- The default targets are `androidStudio:2025.3.3.6` (Panda 3 | 2025.3.3), `androidStudio:2026.1.1.8` (Quail 1 | 2026.1.1), and `pycharm:2026.1`.
+- The default targets are `intellijIdeaCommunity:2023.3` (floor), `androidStudio:2025.3.3.6` (Panda 3 | 2025.3.3), `androidStudio:2026.1.1.8` (Quail 1 | 2026.1.1), and `pycharm:2026.1`.
 
 If broader coverage is needed later, temporarily override `verifierIdeTargets` when running Gradle instead of changing the committed default:
 
 ```bash
-./gradlew verifyPlugin -PverifierIdeTargets=androidStudio:2025.3.3.6,androidStudio:2026.1.1.8,pycharm:2026.1,intellijIdea:2026.1,webstorm:2026.1
+./gradlew verifyPlugin -PverifierIdeTargets=intellijIdeaCommunity:2023.3,androidStudio:2025.3.3.6,androidStudio:2026.1.1.8,pycharm:2026.1,webstorm:2026.1,goland:2026.1,rider:2026.1
 ```
 
 ## Signing and publish configuration
