@@ -109,7 +109,7 @@
     "@types/node": "^25.6.0",
     "@types/vscode": "^1.100.0",
     "@vscode/vsce": "^3.9.1",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "mocha": "^11.7.5",
     "ovsx": "^0.10.11",
     "typescript": "^6.0.3"
