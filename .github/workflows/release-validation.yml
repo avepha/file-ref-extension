@@ -50,6 +50,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew test buildPlugin verifyPluginProjectConfiguration verifyPluginStructure verifyPlugin
         working-directory: jetbrains-plugin
